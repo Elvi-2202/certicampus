@@ -1,34 +1,23 @@
 pipeline {
     agent any
 
-    environment {
-        // On définit l'URL de ton repo pour plus de clarté
-        GIT_REPO = 'https://github.com/Elvi-2202/certicampus.git'
-    }
-
     stages {
-        stage('Checkout') {
-            steps {
-                // Jenkins récupère le code depuis GitHub
-                checkout scm
-            }
-        }
-
+        // On supprime l'étape "Checkout" manuelle car Jenkins le fait déjà automatiquement
+        
         stage('Build Docker') {
             steps {
-                script {
-                    dir('backend') {
-                        sh 'docker-compose build'
-                    }
+                dir('backend') {
+                    // On vérifie que docker-compose est là et on build
+                    sh 'docker-compose build'
                 }
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                script {
-                    // On lance les containers et on installe composer
+                dir('backend') {
                     sh 'docker-compose up -d'
+                    // Utilisation du flag -T pour éviter les erreurs de terminal (TTY)
                     sh 'docker-compose exec -T php composer install --no-interaction --optimize-autoloader'
                 }
             }
@@ -36,20 +25,9 @@ pipeline {
 
         stage('Database Setup') {
             steps {
-                script {
-                    // On prépare la base de données pour les tests
+                dir('backend') {
                     sh 'docker-compose exec -T php php bin/console doctrine:database:create --if-not-exists'
                     sh 'docker-compose exec -T php php bin/console doctrine:schema:update --force'
-                }
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                script {
-                    // Si tu as des tests unitaires (PHPUnit)
-                    // sh 'docker-compose exec -T php bin/phpunit'
-                    echo 'Tests terminés avec succès !'
                 }
             }
         }
@@ -57,8 +35,16 @@ pipeline {
 
     post {
         always {
-            // On nettoie après le build pour ne pas saturer le serveur Jenkins
-            sh 'docker-compose down'
+            // Le "script" et le "dir" assurent que la commande s'exécute au bon endroit
+            script {
+                try {
+                    dir('backend') {
+                        sh 'docker-compose down'
+                    }
+                } catch (Exception e) {
+                    echo "Erreur lors du nettoyage : ${e.message}"
+                }
+            }
         }
     }
 }

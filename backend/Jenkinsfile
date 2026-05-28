@@ -6,6 +6,7 @@ pipeline {
         
         stage('Build Docker') {
             steps {
+                sh 'ls -R'
                 dir('backend') {
                     sh 'docker-compose up -d'
                     // Commande de debug pour voir ce que le container voit réellement

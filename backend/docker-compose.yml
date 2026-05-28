@@ -19,7 +19,7 @@ services:
       dockerfile: Docker/php/Dockerfile
     container_name: symfony_php
     volumes:
-      - ${PWD}:/var/www
+      - ..:/var/www
     depends_on:
       - db
 

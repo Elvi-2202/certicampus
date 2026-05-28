@@ -2,16 +2,11 @@ pipeline {
     agent any
 
     stages {
-        // On supprime l'étape "Checkout" manuelle car Jenkins le fait déjà automatiquement
-        
         stage('Build Docker') {
             steps {
-                sh 'ls -R'
                 dir('backend') {
-                    sh 'docker-compose up -d'
-                    // Commande de debug pour voir ce que le container voit réellement
-                    sh 'docker-compose exec -T php ls -la /var/www' 
-                    sh 'docker-compose exec -T php composer install --no-interaction --optimize-autoloader'
+                    // On build les images proprement
+                    sh 'docker-compose build'
                 }
             }
         }
@@ -20,7 +15,7 @@ pipeline {
             steps {
                 dir('backend') {
                     sh 'docker-compose up -d'
-                    // Utilisation du flag -T pour éviter les erreurs de terminal (TTY)
+                    // Pas besoin de --working-dir si tu as mis working_dir dans le yaml
                     sh 'docker-compose exec -T php composer install --no-interaction --optimize-autoloader'
                 }
             }
@@ -29,8 +24,9 @@ pipeline {
         stage('Database Setup') {
             steps {
                 dir('backend') {
+                    // Attention au chemin de bin/console : il est à la racine de working_dir
                     sh 'docker-compose exec -T php php bin/console doctrine:database:create --if-not-exists'
-                    sh 'docker-compose exec -T php php bin/console doctrine:schema:update --force'
+                    sh 'docker-compose exec -T php php bin/console doctrine:migrations:migrate --no-interaction'
                 }
             }
         }
@@ -38,7 +34,6 @@ pipeline {
 
     post {
         always {
-            // Le "script" et le "dir" assurent que la commande s'exécute au bon endroit
             script {
                 try {
                     dir('backend') {

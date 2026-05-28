@@ -5,7 +5,9 @@ namespace App\Form;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
@@ -17,29 +19,62 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email')
-            ->add('agreeTerms', CheckboxType::class, [
-                'mapped' => false,
+            // 1. Prénom
+            ->add('firstname', TextType::class, [
+                'label' => 'Prénom',
+                'attr' => ['placeholder' => 'Votre prénom'],
                 'constraints' => [
-                    new IsTrue(
-                        message: 'You should agree to our terms.',
+                    new NotBlank(
+                        message: 'Veuillez entrer votre prénom'
                     ),
                 ],
             ])
-            ->add('plainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
-                'mapped' => false,
-                'attr' => ['autocomplete' => 'new-password'],
+            // 2. Nom
+            ->add('lastname', TextType::class, [
+                'label' => 'Nom',
+                'attr' => ['placeholder' => 'Votre nom'],
                 'constraints' => [
                     new NotBlank(
-                        message: 'Please enter a password',
+                        message: 'Veuillez entrer votre nom'
+                    ),
+                ],
+            ])
+            // 3. Email
+            ->add('email', EmailType::class, [
+                'label' => 'Email',
+                'attr' => ['placeholder' => 'votre@email.com'],
+                'constraints' => [
+                    new NotBlank(
+                        message: 'Veuillez entrer un email'
+                    ),
+                ],
+            ])
+            // 4. Mot de passe
+            ->add('plainPassword', PasswordType::class, [
+                'label' => 'Mot de passe',
+                'mapped' => false,
+                'attr' => [
+                    'autocomplete' => 'new-password',
+                    'placeholder' => 'Minimum 6 caractères'
+                ],
+                'constraints' => [
+                    new NotBlank(
+                        message: 'Veuillez entrer un mot de passe',
                     ),
                     new Length(
                         min: 6,
-                        minMessage: 'Your password should be at least {{ limit }} characters',
-                        // max length allowed by Symfony for security reasons
+                        minMessage: 'Votre mot de passe doit faire au moins {{ limit }} caractères',
                         max: 4096,
+                    ),
+                ],
+            ])
+            // 5. Conditions
+            ->add('agreeTerms', CheckboxType::class, [
+                'label' => 'J\'accepte les conditions d\'utilisation',
+                'mapped' => false,
+                'constraints' => [
+                    new IsTrue(
+                        message: 'Vous devez accepter nos conditions pour continuer.',
                     ),
                 ],
             ])

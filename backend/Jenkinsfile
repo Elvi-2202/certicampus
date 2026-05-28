@@ -13,7 +13,13 @@ pipeline {
                     // attendre que les containers démarrent
                     sh 'sleep 15'
 
-                    // vérification PHP
+                    // 🔍 DEBUG COMPLET (AJOUTÉ)
+                    sh 'docker-compose exec -T php pwd'
+                    sh 'docker-compose exec -T php ls -la'
+                    sh 'docker-compose exec -T php ls -la /var/www'
+                    sh 'docker-compose exec -T php find /var/www -maxdepth 2'
+
+                    // vérification PHP (existant)
                     sh 'docker-compose exec -T php ls -la /var/www'
                 }
             }

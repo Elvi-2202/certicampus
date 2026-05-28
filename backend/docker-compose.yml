@@ -32,7 +32,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - .:/var/www
+      - ./backend:/var/www
       - ./Docker/nginx:/etc/nginx/conf.d:ro
     depends_on:
       - php

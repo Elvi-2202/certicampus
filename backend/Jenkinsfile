@@ -2,21 +2,36 @@ pipeline {
     agent any
 
     stages {
-        stage('Build Docker') {
+
+        stage('Start containers') {
             steps {
                 dir('backend') {
-                    // On build les images proprement
-                    sh 'docker-compose build'
+                    sh 'docker-compose down -v'
+                    sh 'docker-compose up -d --build'
                 }
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Wait DB') {
             steps {
                 dir('backend') {
-                    sh 'docker-compose up -d'
-                    sh 'sleep 10' // laisser le temps à MySQL de démarrer
-                    sh 'docker-compose exec -T php composer install --no-interaction --optimize-autoloader'
+                    sh 'sleep 20'
+                }
+            }
+        }
+
+        stage('Composer install') {
+            steps {
+                dir('backend') {
+                    sh 'docker-compose exec -T php composer install --no-interaction --prefer-dist'
+                }
+            }
+        }
+
+        stage('Verify Symfony') {
+            steps {
+                dir('backend') {
+                    sh 'docker-compose exec -T php php bin/console --version'
                 }
             }
         }
@@ -24,24 +39,28 @@ pipeline {
         stage('Database Setup') {
             steps {
                 dir('backend') {
-                    // Attention au chemin de bin/console : il est à la racine de working_dir
-                    sh 'docker-compose exec -T php php bin/console doctrine:database:create --if-not-exists'
-                    sh 'docker-compose exec -T php php bin/console doctrine:migrations:migrate --no-interaction'
-                    }
+
+            // sécurité: attendre DB
+                sh 'sleep 10'
+
+            // création DB (ignore si existe déjà)
+                sh '''
+                docker-compose exec -T php php bin/console doctrine:database:create --if-not-exists || true
+                '''
+
+            // migrations (VRAI test important)
+                sh '''
+                docker-compose exec -T php php bin/console doctrine:migrations:migrate --no-interaction
+                '''
+                 }
             }
         }
     }
 
     post {
         always {
-            script {
-                try {
-                    dir('backend') {
-                        sh 'docker-compose down'
-                    }
-                } catch (Exception e) {
-                    echo "Erreur lors du nettoyage : ${e.message}"
-                }
+            dir('backend') {
+                sh 'docker-compose down'
             }
         }
     }

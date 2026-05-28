@@ -8,7 +8,7 @@ pipeline {
             steps {
                 dir('backend') {
                     // On vérifie que docker-compose est là et on build
-                    sh 'docker-compose build'
+                    sh 'docker-compose build --no-cache'
                 }
             }
         }

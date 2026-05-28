@@ -20,9 +20,9 @@ services:
       context: .
       dockerfile: Docker/php/Dockerfile
     container_name: symfony_php
-    working_dir: /var/www
+    working_dir: /var/www/backend
     volumes:
-      - .:/var/www 
+      - .:/var/www/backend 
     depends_on:
       - db
 
@@ -32,7 +32,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - .:/var/www 
+      - .:/var/www/backend
       - ./Docker/nginx:/etc/nginx/conf.d:ro
     depends_on:
       - php

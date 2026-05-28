@@ -7,9 +7,10 @@ pipeline {
         stage('Build Docker') {
             steps {
                 dir('backend') {
-                    sh 'ln -s Docker docker || true'
-                    // On vérifie que docker-compose est là et on build
-                    sh 'docker-compose build --no-cache'
+                    sh 'docker-compose up -d'
+                    // Commande de debug pour voir ce que le container voit réellement
+                    sh 'docker-compose exec -T php ls -la /var/www' 
+                    sh 'docker-compose exec -T php composer install --no-interaction --optimize-autoloader'
                 }
             }
         }

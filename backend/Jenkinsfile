@@ -15,9 +15,7 @@ pipeline {
             steps {
                 dir('backend') {
                     sh 'docker-compose up -d'
-                    // On force le listage pour être SÛR de ce qu'on voit
-                    sh 'docker-compose exec -T php ls -la /var/www'
-                    // Si composer.json est là, cette commande DOIT marcher
+                    sh 'sleep 10' // laisser le temps à MySQL de démarrer
                     sh 'docker-compose exec -T php composer install --no-interaction --optimize-autoloader'
                 }
             }
@@ -29,7 +27,7 @@ pipeline {
                     // Attention au chemin de bin/console : il est à la racine de working_dir
                     sh 'docker-compose exec -T php php bin/console doctrine:database:create --if-not-exists'
                     sh 'docker-compose exec -T php php bin/console doctrine:migrations:migrate --no-interaction'
-                }
+                    }
             }
         }
     }

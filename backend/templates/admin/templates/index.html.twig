@@ -1,0 +1,44 @@
+{# ============================================================ #}
+{# templates/admin/templates/index.html.twig                    #}
+{# ============================================================ #}
+{% extends 'base.html.twig' %}
+{% import 'admin/macros.html.twig' as ui %}
+{% block title %}Templates — Certicampus{% endblock %}
+{% block stylesheets %}{{ ui.sidebar('templates') | raw }}{% endblock %}
+{% block body %}
+<div class="layout">
+  {{ ui.sidebar('templates') | raw }}
+  <main class="main">
+    <div class="page-header">
+      <div><h1>Templates de diplômes</h1><p>{{ templates|length }} template(s)</p></div>
+      <a href="{{ path('app_admin_templates_new') }}" class="btn">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nouveau template
+      </a>
+    </div>
+    <div class="table-wrap">
+      {% if templates is empty %}<div class="empty">Aucun template enregistré.</div>
+      {% else %}
+      <table>
+        <thead><tr><th>#</th><th>Aperçu du contenu</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for t in templates %}
+        <tr>
+          <td style="color:#aaa;">{{ t.id }}</td>
+          <td style="color:#555; max-width:400px;">{{ t.content|slice(0,100) }}...</td>
+          <td><div class="actions">
+            <a href="{{ path('app_admin_templates_edit', {id: t.id}) }}" class="btn btn-outline btn-sm">Modifier</a>
+            <form method="POST" action="{{ path('app_admin_templates_delete', {id: t.id}) }}" onsubmit="return confirm('Supprimer ?')">
+              <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ t.id) }}">
+              <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+            </form>
+          </div></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </div>
+  </main>
+</div>
+{% endblock %}

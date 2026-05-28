@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+{% import 'admin/macros.html.twig' as ui %}
+
+{% block title %}{{ title }} — Certicampus{% endblock %}
+
+{% block stylesheets %}{{ ui.sidebar(active) | raw }}
+<style>
+  .form-card { background:#fff; border-radius:12px; border:1px solid #ebebeb; padding:2rem; max-width:600px; }
+  .form-group { margin-bottom:1.25rem; }
+  .form-group label { display:block; font-size:13px; font-weight:500; margin-bottom:6px; color:#444; }
+  .form-group input, .form-group textarea, .form-group select {
+    width:100%; padding:9px 14px; border:1px solid #ddd; border-radius:8px;
+    font-size:14px; font-family:inherit; outline:none; transition:border-color 0.15s;
+  }
+  .form-group input:focus, .form-group textarea:focus { border-color:#aaa; }
+  .form-group textarea { resize:vertical; min-height:100px; }
+  .form-actions { display:flex; gap:8px; margin-top:1.5rem; }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="layout">
+  {{ ui.sidebar(active) | raw }}
+  <main class="main">
+
+    <div class="page-header">
+      <div>
+        <h1>{{ title }}</h1>
+        <p><a href="{{ back_url }}" style="color:#888; text-decoration:none;">← Retour</a></p>
+      </div>
+    </div>
+
+    <div class="form-card">
+      {{ form_start(form) }}
+        {% for field in form %}
+          {% if field.vars.name != '_token' %}
+          <div class="form-group">
+            {{ form_label(field) }}
+            {{ form_widget(field) }}
+            {{ form_errors(field) }}
+          </div>
+          {% endif %}
+        {% endfor %}
+        <div class="form-actions">
+          <button type="submit" class="btn">Enregistrer</button>
+          <a href="{{ back_url }}" class="btn btn-outline">Annuler</a>
+        </div>
+      {{ form_end(form) }}
+    </div>
+
+  </main>
+</div>
+{% endblock %}

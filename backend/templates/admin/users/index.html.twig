@@ -1,0 +1,45 @@
+{# ============================================================ #}
+{# templates/admin/users/index.html.twig                        #}
+{# ============================================================ #}
+{% extends 'base.html.twig' %}
+{% import 'admin/macros.html.twig' as ui %}
+{% block title %}Utilisateurs — Certicampus{% endblock %}
+{% block stylesheets %}{{ ui.sidebar('users') | raw }}{% endblock %}
+{% block body %}
+<div class="layout">
+  {{ ui.sidebar('users') | raw }}
+  <main class="main">
+    <div class="page-header">
+      <div><h1>Utilisateurs</h1><p>{{ users|length }} compte(s)</p></div>
+    </div>
+    <div class="search-bar"><input type="text" id="search" placeholder="Rechercher..." onkeyup="filterTable()"></div>
+    <div class="table-wrap">
+      {% if users is empty %}<div class="empty">Aucun utilisateur enregistré.</div>
+      {% else %}
+      <table id="table">
+        <thead><tr><th>#</th><th>Nom</th><th>Email</th><th>Rôles</th></tr></thead>
+        <tbody>
+        {% for u in users %}
+        <tr>
+          <td style="color:#aaa;">{{ u.id }}</td>
+          <td><strong>{{ u.firstname }} {{ u.lastname }}</strong></td>
+          <td style="color:#555;">{{ u.email }}</td>
+          <td>
+            {% for role in u.roles %}
+              {% if role != 'ROLE_USER' %}
+                <span class="badge badge-blue">{{ role }}</span>
+              {% else %}
+                <span class="badge badge-gray">{{ role }}</span>
+              {% endif %}
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </div>
+  </main>
+</div>
+<script>function filterTable(){const q=document.getElementById('search').value.toLowerCase();document.querySelectorAll('#table tbody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q)?'':'none');}</script>
+{% endblock %}

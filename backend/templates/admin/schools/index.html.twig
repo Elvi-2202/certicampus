@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+{% import 'admin/macros.html.twig' as ui %}
+
+{% block title %}Écoles — Certicampus{% endblock %}
+
+{% block stylesheets %}{{ ui.sidebar('schools') | raw }}{% endblock %}
+
+{% block body %}
+<div class="layout">
+  {{ ui.sidebar('schools') | raw }}
+  <main class="main">
+
+    <div class="page-header">
+      <div>
+        <h1>Écoles</h1>
+        <p>{{ schools|length }} établissement(s) partenaire(s)</p>
+      </div>
+      <a href="{{ path('app_admin_schools_new') }}" class="btn">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nouvelle école
+      </a>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="search" placeholder="Rechercher une école..." onkeyup="filterTable()">
+    </div>
+
+    <div class="table-wrap">
+      {% if schools is empty %}
+        <div class="empty">Aucune école enregistrée pour l'instant.</div>
+      {% else %}
+      <table id="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nom</th>
+            <th>Adresse</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for school in schools %}
+          <tr>
+            <td style="color:#aaa;">{{ school.id }}</td>
+            <td><strong>{{ school.label }}</strong></td>
+            <td style="color:#555; max-width:300px;">{{ school.address }}</td>
+            <td>
+              <div class="actions">
+                <a href="{{ path('app_admin_schools_edit', {id: school.id}) }}" class="btn btn-outline btn-sm">Modifier</a>
+                <form method="POST" action="{{ path('app_admin_schools_delete', {id: school.id}) }}" onsubmit="return confirm('Supprimer cette école ?')">
+                  <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ school.id) }}">
+                  <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </div>
+
+  </main>
+</div>
+<script>
+function filterTable() {
+  const q = document.getElementById('search').value.toLowerCase();
+  document.querySelectorAll('#table tbody tr').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+</script>
+{% endblock %}

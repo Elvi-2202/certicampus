@@ -1,0 +1,48 @@
+{# ============================================================ #}
+{# templates/admin/certified/index.html.twig                    #}
+{# ============================================================ #}
+{% extends 'base.html.twig' %}
+{% import 'admin/macros.html.twig' as ui %}
+{% block title %}Certifiés — Certicampus{% endblock %}
+{% block stylesheets %}{{ ui.sidebar('certified') | raw }}{% endblock %}
+{% block body %}
+<div class="layout">
+  {{ ui.sidebar('certified') | raw }}
+  <main class="main">
+    <div class="page-header">
+      <div><h1>Certifiés</h1><p>{{ certifieds|length }} diplômé(s)</p></div>
+      <a href="{{ path('app_admin_certified_new') }}" class="btn">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nouveau certifié
+      </a>
+    </div>
+    <div class="search-bar"><input type="text" id="search" placeholder="Rechercher..." onkeyup="filterTable()"></div>
+    <div class="table-wrap">
+      {% if certifieds is empty %}<div class="empty">Aucun certifié enregistré.</div>
+      {% else %}
+      <table id="table">
+        <thead><tr><th>#</th><th>Nom</th><th>Mention</th><th>Date de diplôme</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for c in certifieds %}
+        <tr>
+          <td style="color:#aaa;">{{ c.id }}</td>
+          <td><strong>{{ c.label }}</strong></td>
+          <td><span class="badge badge-blue">{{ c.grade }}</span></td>
+          <td style="color:#555;">{{ c.graduationDate|date('d/m/Y') }}</td>
+          <td><div class="actions">
+            <a href="{{ path('app_admin_certified_edit', {id: c.id}) }}" class="btn btn-outline btn-sm">Modifier</a>
+            <form method="POST" action="{{ path('app_admin_certified_delete', {id: c.id}) }}" onsubmit="return confirm('Supprimer ?')">
+              <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ c.id) }}">
+              <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+            </form>
+          </div></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </div>
+  </main>
+</div>
+<script>function filterTable(){const q=document.getElementById('search').value.toLowerCase();document.querySelectorAll('#table tbody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q)?'':'none');}</script>
+{% endblock %}

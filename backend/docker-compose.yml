@@ -29,8 +29,8 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - .:/var/www
-      - ./Docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - .:/var/www:delegated
+      - ./Docker/nginx:/etc/nginx/conf.d/:ro
     depends_on:
       - php
 

@@ -8,14 +8,14 @@ pipeline {
                 dir('backend') {
 
                     sh 'docker-compose down -v'
-
                     sh 'docker-compose up -d --build'
 
-            // attendre que tout démarre
+                    // attendre que les containers démarrent
                     sh 'sleep 15'
 
-            // maintenant seulement on peut exec
+                    // vérification PHP
                     sh 'docker-compose exec -T php ls -la /var/www'
+                }
             }
         }
 
@@ -47,19 +47,19 @@ pipeline {
             steps {
                 dir('backend') {
 
-            // sécurité: attendre DB
-                sh 'sleep 10'
+                    // sécurité DB
+                    sh 'sleep 10'
 
-            // création DB (ignore si existe déjà)
-                sh '''
-                docker-compose exec -T php php bin/console doctrine:database:create --if-not-exists || true
-                '''
+                    // création DB (ignore si existe déjà)
+                    sh '''
+                    docker-compose exec -T php php bin/console doctrine:database:create --if-not-exists || true
+                    '''
 
-            // migrations (VRAI test important)
-                sh '''
-                docker-compose exec -T php php bin/console doctrine:migrations:migrate --no-interaction
-                '''
-                 }
+                    // migrations
+                    sh '''
+                    docker-compose exec -T php php bin/console doctrine:migrations:migrate --no-interaction
+                    '''
+                }
             }
         }
     }

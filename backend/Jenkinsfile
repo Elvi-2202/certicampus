@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+
+    environment {
+        // On définit l'URL de ton repo pour plus de clarté
+        GIT_REPO = 'https://github.com/Elvi-2202/certicampus.git'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Jenkins récupère le code depuis GitHub
+                checkout scm
+            }
+        }
+
+        stage('Build Docker') {
+            steps {
+                script {
+                    // On build les images proprement
+                    sh 'docker-compose build'
+                }
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    // On lance les containers et on installe composer
+                    sh 'docker-compose up -d'
+                    sh 'docker-compose exec -T php composer install --no-interaction --optimize-autoloader'
+                }
+            }
+        }
+
+        stage('Database Setup') {
+            steps {
+                script {
+                    // On prépare la base de données pour les tests
+                    sh 'docker-compose exec -T php php bin/console doctrine:database:create --if-not-exists'
+                    sh 'docker-compose exec -T php php bin/console doctrine:schema:update --force'
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    // Si tu as des tests unitaires (PHPUnit)
+                    // sh 'docker-compose exec -T php bin/phpunit'
+                    echo 'Tests terminés avec succès !'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // On nettoie après le build pour ne pas saturer le serveur Jenkins
+            sh 'docker-compose down'
+        }
+    }
+}

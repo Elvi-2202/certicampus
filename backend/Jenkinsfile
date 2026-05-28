@@ -17,8 +17,9 @@ pipeline {
         stage('Build Docker') {
             steps {
                 script {
-                    // On build les images proprement
-                    sh 'docker-compose build'
+                    dir('backend') {
+                        sh 'docker-compose build'
+                    }
                 }
             }
         }

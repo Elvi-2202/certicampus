@@ -33,7 +33,7 @@ services:
       - "8080:80"
     volumes:
       - .:/var/www
-      - ./Docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./Docker/nginx:/etc/nginx/conf.d:ro
     depends_on:
       - php
 

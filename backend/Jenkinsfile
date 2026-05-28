@@ -6,10 +6,16 @@ pipeline {
         stage('Start containers') {
             steps {
                 dir('backend') {
+
                     sh 'docker-compose down -v'
-                    sh 'docker-compose exec -T php ls -la /var/www'
+
                     sh 'docker-compose up -d --build'
-                }
+
+            // attendre que tout démarre
+                    sh 'sleep 15'
+
+            // maintenant seulement on peut exec
+                    sh 'docker-compose exec -T php ls -la /var/www'
             }
         }
 

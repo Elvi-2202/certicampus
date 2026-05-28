@@ -1,20 +1,469 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello Admin/DashboardController!{% endblock %}
+{% block title %}Dashboard — Certicampus{% endblock %}
+
+{% block stylesheets %}
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Instrument Sans', 'Helvetica Neue', sans-serif;
+    background: #f5f4f0;
+    color: #1a1a1a;
+    min-height: 100vh;
+  }
+
+  .layout { display: flex; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background: #1a1a1a;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.25rem;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 10;
+  }
+
+  .sidebar-logo {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin-bottom: 2.5rem;
+    color: #fff;
+  }
+
+  .sidebar-logo span {
+    color: #c8f564;
+  }
+
+  .sidebar-nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #888;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .nav-item:hover { background: #2a2a2a; color: #fff; }
+  .nav-item.active { background: #c8f564; color: #1a1a1a; font-weight: 500; }
+
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  .sidebar-footer {
+    border-top: 1px solid #2a2a2a;
+    padding-top: 1rem;
+    font-size: 13px;
+    color: #555;
+  }
+
+  .sidebar-footer strong { display: block; color: #ccc; margin-bottom: 2px; }
+
+  /* Main */
+  .main {
+    margin-left: 220px;
+    flex: 1;
+    padding: 2.5rem 2rem;
+    max-width: calc(100vw - 220px);
+  }
+
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+  }
+
+  .page-header h1 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: #1a1a1a;
+  }
+
+  .page-header p {
+    font-size: 14px;
+    color: #888;
+    margin-top: 3px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+
+  .btn:hover { opacity: 0.85; }
+
+  /* KPI cards */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 1.75rem;
+  }
+
+  .kpi-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.25rem;
+    border: 1px solid #ebebeb;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .kpi-card.green::before { background: #c8f564; }
+  .kpi-card.blue::before { background: #6ec6f5; }
+  .kpi-card.amber::before { background: #f5c842; }
+  .kpi-card.coral::before { background: #f57c6e; }
+
+  .kpi-label {
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .kpi-label svg { width: 14px; height: 14px; }
+
+  .kpi-value {
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -1px;
+    color: #1a1a1a;
+    line-height: 1;
+  }
+
+  .kpi-sub {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 4px;
+  }
+
+  /* Cards grid */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 1.75rem;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #ebebeb;
+    padding: 1.25rem;
+  }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title svg { width: 16px; height: 16px; color: #888; }
+
+  .list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: #f8f8f6;
+    border-radius: 8px;
+    margin-bottom: 6px;
+  }
+
+  .list-item:last-child { margin-bottom: 0; }
+
+  .list-item-label { font-size: 13px; font-weight: 500; color: #1a1a1a; }
+  .list-item-sub { font-size: 12px; color: #888; margin-top: 2px; }
+
+  .badge {
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .badge-green { background: #ecfcd6; color: #3a7a00; }
+  .badge-red { background: #fde8e8; color: #a33030; }
+
+  /* Avatar */
+  .avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .avatar-blue { background: #daedfb; color: #1a5fa0; }
+  .avatar-green { background: #ecfcd6; color: #3a7a00; }
+  .avatar-amber { background: #fef3c7; color: #92620a; }
+
+  /* Quick nav */
+  .quicknav {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #ebebeb;
+    padding: 1.25rem;
+  }
+
+  .quicknav-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-top: 1rem;
+  }
+
+  .quicknav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 8px;
+    border-radius: 10px;
+    border: 1px solid #ebebeb;
+    text-decoration: none;
+    color: #1a1a1a;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .quicknav-item:hover { background: #f5f4f0; border-color: #d0d0d0; }
+
+  .quicknav-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #f5f4f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .quicknav-icon svg { width: 18px; height: 18px; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<div class="layout">
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+  {# Sidebar #}
+  <aside class="sidebar">
+    <div class="sidebar-logo">Certi<span>campus</span></div>
+    <nav class="sidebar-nav">
+      <a href="{{ path('app_admin_dashboard') }}" class="nav-item active">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="#" class="nav-item">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422A12.083 12.083 0 0112 21a12.083 12.083 0 01-6.16-10.422L12 14z"/></svg>
+        Formations
+      </a>
+      <a href="#" class="nav-item">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Écoles
+      </a>
+      <a href="#" class="nav-item">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Certifiés
+      </a>
+      <a href="#" class="nav-item">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Diplômes
+      </a>
+      <a href="#" class="nav-item">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Templates
+      </a>
+      <a href="#" class="nav-item">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M21 21v-2a4 4 0 00-3-3.87"/></svg>
+        Utilisateurs
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <strong>{{ app.user ? app.user.email : 'Admin' }}</strong>
+      <a href="{{ path('app_logout') }}" style="color:#555; text-decoration:none; font-size:12px;">Se déconnecter</a>
+    </div>
+  </aside>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/manin/Desktop/certicampus/backend/src/Controller/Admin/DashboardController.php</code></li>
-        <li>Your template at <code>C:/Users/manin/Desktop/certicampus/backend/templates/admin/dashboard/index.html.twig</code></li>
-    </ul>
+  {# Main content #}
+  <main class="main">
+
+    <div class="page-header">
+      <div>
+        <h1>Dashboard</h1>
+        <p>Bienvenue sur Certicampus — {{ "now"|date("d/m/Y") }}</p>
+      </div>
+      <a href="#" class="btn">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nouveau diplôme
+      </a>
+    </div>
+
+    {# KPIs #}
+    <div class="kpi-grid">
+      <div class="kpi-card green">
+        <div class="kpi-label">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          Certifiés
+        </div>
+        <div class="kpi-value">{{ count_certified }}</div>
+        <div class="kpi-sub">diplômés enregistrés</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-label">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Diplômes
+        </div>
+        <div class="kpi-value">{{ count_diplomas }}</div>
+        <div class="kpi-sub">générés au total</div>
+      </div>
+      <div class="kpi-card amber">
+        <div class="kpi-label">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          Écoles
+        </div>
+        <div class="kpi-value">{{ count_schools }}</div>
+        <div class="kpi-sub">établissements partenaires</div>
+      </div>
+      <div class="kpi-card coral">
+        <div class="kpi-label">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/></svg>
+          Formations
+        </div>
+        <div class="kpi-value">{{ count_trainings }}</div>
+        <div class="kpi-sub">cursus actifs</div>
+      </div>
+    </div>
+
+    {# Derniers diplômes + certifiés #}
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="card-title">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Derniers diplômes générés
+        </div>
+        {% for diploma in last_diplomas %}
+        <div class="list-item">
+          <div>
+            <div class="list-item-label">Diplôme #{{ diploma.id }}</div>
+            <div class="list-item-sub">{{ diploma.generatedAt|date("d/m/Y") }}</div>
+          </div>
+          {% if diploma.isValid %}
+            <span class="badge badge-green">Valide</span>
+          {% else %}
+            <span class="badge badge-red">Invalide</span>
+          {% endif %}
+        </div>
+        {% else %}
+        <p style="font-size:13px; color:#aaa; text-align:center; padding:1rem 0;">Aucun diplôme pour l'instant</p>
+        {% endfor %}
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          Derniers certifiés
+        </div>
+        {% set colors = ['avatar-blue', 'avatar-green', 'avatar-amber'] %}
+        {% for certified in last_certified %}
+        <div class="list-item">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="avatar {{ colors[loop.index0 % 3] }}">
+              {{ certified.label|slice(0,2)|upper }}
+            </div>
+            <div>
+              <div class="list-item-label">{{ certified.label }}</div>
+              <div class="list-item-sub">{{ certified.grade }} · {{ certified.graduationDate|date("Y") }}</div>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <p style="font-size:13px; color:#aaa; text-align:center; padding:1rem 0;">Aucun certifié pour l'instant</p>
+        {% endfor %}
+      </div>
+
+    </div>
+
+    {# Navigation rapide #}
+    <div class="quicknav">
+      <div class="card-title" style="margin-bottom:0;">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Navigation rapide
+      </div>
+      <div class="quicknav-grid">
+        <a href="#" class="quicknav-item">
+          <div class="quicknav-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+          Écoles
+        </a>
+        <a href="#" class="quicknav-item">
+          <div class="quicknav-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/></svg></div>
+          Formations
+        </a>
+        <a href="#" class="quicknav-item">
+          <div class="quicknav-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+          Certifiés
+        </a>
+        <a href="#" class="quicknav-item">
+          <div class="quicknav-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg></div>
+          Diplômes
+        </a>
+        <a href="#" class="quicknav-item">
+          <div class="quicknav-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+          Templates
+        </a>
+        <a href="#" class="quicknav-item">
+          <div class="quicknav-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 7h10M7 12h10M7 17h6"/></svg></div>
+          Spécialités
+        </a>
+      </div>
+    </div>
+
+  </main>
 </div>
 {% endblock %}

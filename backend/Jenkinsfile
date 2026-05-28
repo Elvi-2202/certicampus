@@ -15,7 +15,9 @@ pipeline {
             steps {
                 dir('backend') {
                     sh 'docker-compose up -d'
-                    // Pas besoin de --working-dir si tu as mis working_dir dans le yaml
+                    // On force le listage pour être SÛR de ce qu'on voit
+                    sh 'docker-compose exec -T php ls -la /var/www'
+                    // Si composer.json est là, cette commande DOIT marcher
                     sh 'docker-compose exec -T php composer install --no-interaction --optimize-autoloader'
                 }
             }

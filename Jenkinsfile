@@ -4,67 +4,46 @@ pipeline {
     stages {
         stage('Start containers') {
             steps {
-                dir('backend') {
-                    // Nettoyage des anciens containers et volumes orphelins
-                    sh 'docker-compose down -v'
-                    // Build et lancement
-                    sh 'docker-compose up -d --build'
-                    
-                    // On attend que les services soient prêts (MySQL notamment)
-                    sh 'sleep 15'
-                }
+                // Nettoyage et lancement à la racine
+                sh 'docker-compose down -v'
+                sh 'docker-compose up -d --build'
+                sh 'sleep 15'
             }
         }
 
         stage('Composer install') {
             steps {
-                dir('backend') {
-                    // On force le working-dir car ton code est dans /var/www/backend
-                    sh 'docker-compose exec -T php composer install --no-interaction --prefer-dist --working-dir=/var/www/backend'
-                }
+                // Plus besoin de spécifier le working-dir, Docker utilise /var/www par défaut
+                sh 'docker-compose exec -T php composer install --no-interaction --prefer-dist'
             }
         }
 
         stage('Verify Symfony') {
             steps {
-                dir('backend') {
-                    // Vérification que Symfony répond bien
-                    sh 'docker-compose exec -T php php /var/www/backend/bin/console --version'
-                }
+                sh 'docker-compose exec -T php php bin/console --version'
             }
         }
 
         stage('Database Setup') {
             steps {
-                dir('backend') {
-                    // Petite pause pour être sûr que MySQL accepte les connexions
-                    sh 'sleep 10'
-
-                    // Création de la DB (le || true évite de planter si elle existe déjà)
-                    sh 'docker-compose exec -T php php /var/www/backend/bin/console doctrine:database:create --if-not-exists || true'
-                    
-                    // Exécution des migrations
-                    sh 'docker-compose exec -T php php /var/www/backend/bin/console doctrine:migrations:migrate --no-interaction'
-                    
-                    // Optionnel : Si tu n'as pas encore de migrations mais juste un schéma :
-                    // sh 'docker-compose exec -T php php /var/www/backend/bin/console doctrine:schema:update --force'
-                }
+                sh 'sleep 10'
+                // Création de la DB
+                sh 'docker-compose exec -T php php bin/console doctrine:database:create --if-not-exists || true'
+                // Migrations
+                sh 'docker-compose exec -T php php bin/console doctrine:migrations:migrate --no-interaction'
             }
         }
     }
 
     post {
         always {
-            dir('backend') {
-                // On arrête tout proprement après le build
-                sh 'docker-compose down'
-            }
+            sh 'docker-compose down'
         }
         success {
-            echo "Le déploiement et les tests Docker se sont terminés avec succès !"
+            echo "Succès ! Ton projet est disponible sur http://localhost:8080"
         }
         failure {
-            echo "Le build a échoué. Vérifiez les logs de 'Composer install' ou 'Database Setup'."
+            echo "Le build a échoué. Vérifie les volumes ou la configuration DB."
         }
     }
 }

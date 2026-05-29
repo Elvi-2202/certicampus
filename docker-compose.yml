@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   db:
     image: mysql:8.0
@@ -21,8 +19,6 @@ services:
       dockerfile: Docker/php/Dockerfile
     container_name: symfony_php
     working_dir: /var/www
-    volumes:
-      - .:/var/www
     depends_on:
       - db
 

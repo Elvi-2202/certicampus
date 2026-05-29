@@ -6,8 +6,9 @@ pipeline {
             steps {
                 sh 'docker rm -f symfony_db symfony_php symfony_nginx || true'
                 sh 'docker-compose down -v || true'
+                sh 'docker volume rm certicampus-ci_db_data || true'
                 sh 'docker rmi certicampus-ci-php || true'
-                sh 'docker-compose up -d --build --no-cache || docker-compose up -d --build'
+                sh 'docker-compose up -d --build'
                 sh 'sleep 15'
             }
         }
@@ -34,7 +35,7 @@ pipeline {
 
     post {
         always {
-            sh 'docker-compose down || true'
+            sh 'docker-compose down -v || true'
             cleanWs()
         }
     }

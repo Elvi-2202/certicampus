@@ -1,0 +1,320 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Étudiants — Certicampus{% endblock %}
+
+{% block stylesheets %}
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Instrument Sans', 'Helvetica Neue', sans-serif;
+    background: #f5f4f0;
+    color: #1a1a1a;
+    min-height: 100vh;
+  }
+
+  .layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background: #1a1a1a;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.25rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 10;
+  }
+
+  .sidebar-logo {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin-bottom: 2.5rem;
+    color: #fff;
+  }
+
+  .sidebar-logo span {
+    color: #c8f564;
+  }
+
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #888;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .nav-item:hover {
+    background: #2a2a2a;
+    color: #fff;
+  }
+
+  .nav-item.active {
+    background: #c8f564;
+    color: #1a1a1a;
+    font-weight: 500;
+  }
+
+  .sidebar-footer {
+    border-top: 1px solid #2a2a2a;
+    padding-top: 1rem;
+    font-size: 13px;
+    color: #555;
+  }
+
+  .sidebar-footer strong {
+    display: block;
+    color: #ccc;
+    margin-bottom: 2px;
+  }
+
+  /* Main */
+  .main {
+    margin-left: 220px;
+    flex: 1;
+    padding: 2.5rem 2rem;
+    max-width: calc(100vw - 220px);
+  }
+
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+  }
+
+  .page-header h1 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: #1a1a1a;
+  }
+
+  .page-header p {
+    font-size: 14px;
+    color: #888;
+    margin-top: 3px;
+  }
+
+  /* Card */
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #ebebeb;
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 1.25rem;
+  }
+
+  /* List */
+  .list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    background: #f8f8f6;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+
+  .list-item:hover {
+    background: #f1f1ed;
+    transform: translateY(-1px);
+  }
+
+  .list-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .list-item-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  .list-item-sub {
+    font-size: 12px;
+    color: #888;
+    margin-top: 3px;
+  }
+
+  /* Badge */
+  .badge {
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+
+  .badge-green {
+    background: #ecfcd6;
+    color: #3a7a00;
+  }
+
+  /* Avatar */
+  .avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .avatar-blue {
+    background: #daedfb;
+    color: #1a5fa0;
+  }
+
+  .avatar-green {
+    background: #ecfcd6;
+    color: #3a7a00;
+  }
+
+  .avatar-amber {
+    background: #fef3c7;
+    color: #92620a;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: #999;
+    font-size: 14px;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar {
+      display: none;
+    }
+
+    .main {
+      margin-left: 0;
+      max-width: 100%;
+      padding: 1.5rem;
+    }
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            Certi<span>campus</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="{{ path('app_client_dashboard') }}" class="nav-item">
+                Dashboard
+            </a>
+
+            <a href="{{ path('app_client_student_list') }}" class="nav-item active">
+                Mes Étudiants
+            </a>
+
+            <a href="{{ path('app_client_diploma_list') }}" class="nav-item">
+                Niveaux Diplômes
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <strong>{{ app.user.email }}</strong>
+            <a href="{{ path('app_logout') }}"
+               style="color:#555; text-decoration:none; font-size:12px;">
+                Se déconnecter
+            </a>
+        </div>
+    </aside>
+
+    <main class="main">
+
+        <div class="page-header">
+            <div>
+                <h1>Mes Étudiants Certifiés</h1>
+                <p>Liste des diplômés enregistrés</p>
+            </div>
+        </div>
+
+        <div class="card">
+
+            <div class="card-title">
+                Étudiants certifiés
+            </div>
+
+            {% set colors = ['avatar-blue', 'avatar-green', 'avatar-amber'] %}
+
+            {% for student in certified_students %}
+                <div class="list-item">
+
+                    <div style="display:flex; align-items:center; gap:12px;">
+
+                        <div class="avatar {{ colors[loop.index0 % 3] }}">
+                            {{ student.label|slice(0,2)|upper }}
+                        </div>
+
+                        <div>
+                            <div class="list-item-label">
+                                {{ student.label }}
+                            </div>
+
+                            <div class="list-item-sub">
+                                Promotion {{ student.graduationDate|date('Y') }}
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <span class="badge badge-green">
+                        Certifié
+                    </span>
+
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    Aucun étudiant certifié trouvé.
+                </div>
+            {% endfor %}
+
+        </div>
+
+    </main>
+</div>
+{% endblock %}

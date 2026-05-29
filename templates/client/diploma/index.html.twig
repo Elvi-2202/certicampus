@@ -1,0 +1,348 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Diplômes — Certicampus{% endblock %}
+
+{% block stylesheets %}
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Instrument Sans', 'Helvetica Neue', sans-serif;
+    background: #f5f4f0;
+    color: #1a1a1a;
+    min-height: 100vh;
+  }
+
+  .layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background: #1a1a1a;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.25rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 10;
+  }
+
+  .sidebar-logo {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin-bottom: 2.5rem;
+    color: #fff;
+  }
+
+  .sidebar-logo span {
+    color: #c8f564;
+  }
+
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #888;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .nav-item:hover {
+    background: #2a2a2a;
+    color: #fff;
+  }
+
+  .nav-item.active {
+    background: #c8f564;
+    color: #1a1a1a;
+    font-weight: 500;
+  }
+
+  .sidebar-footer {
+    border-top: 1px solid #2a2a2a;
+    padding-top: 1rem;
+    font-size: 13px;
+    color: #555;
+  }
+
+  .sidebar-footer strong {
+    display: block;
+    color: #ccc;
+    margin-bottom: 2px;
+  }
+
+  /* Main */
+  .main {
+    margin-left: 220px;
+    flex: 1;
+    padding: 2.5rem 2rem;
+    max-width: calc(100vw - 220px);
+  }
+
+  .page-header {
+    margin-bottom: 2rem;
+  }
+
+  .page-header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: #1a1a1a;
+  }
+
+  .page-header p {
+    font-size: 14px;
+    color: #888;
+    margin-top: 4px;
+  }
+
+  /* Grid */
+  .diploma-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+
+  /* Cards */
+  .diploma-card {
+    background: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 14px;
+    padding: 1.5rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .diploma-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+  }
+
+  .diploma-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .diploma-badge {
+    background: #f5f4f0;
+    color: #666;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+  }
+
+  .diploma-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #f5f4f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .diploma-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: #1a1a1a;
+  }
+
+  .diploma-title {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: #1a1a1a;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .diploma-sub {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 1rem;
+  }
+
+  .diploma-footer {
+    border-top: 1px solid #efefef;
+    padding-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ecfcd6;
+    color: #3a7a00;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #3a7a00;
+  }
+
+  .diploma-date {
+    font-size: 12px;
+    color: #aaa;
+  }
+
+  .empty-state {
+    background: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 14px;
+    padding: 3rem;
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar {
+      display: none;
+    }
+
+    .main {
+      margin-left: 0;
+      max-width: 100%;
+      padding: 1.5rem;
+    }
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            Certi<span>campus</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="{{ path('app_client_dashboard') }}" class="nav-item">
+                Dashboard
+            </a>
+
+            <a href="{{ path('app_client_student_list') }}" class="nav-item">
+                Mes Étudiants
+            </a>
+
+            <a href="{{ path('app_client_diploma_list') }}" class="nav-item active">
+                Niveaux Diplômes
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <strong>{{ app.user.email }}</strong>
+
+            <a href="{{ path('app_logout') }}"
+               style="color:#555; text-decoration:none; font-size:12px;">
+                Se déconnecter
+            </a>
+        </div>
+    </aside>
+
+    <main class="main">
+
+        <div class="page-header">
+            <h1>Niveaux de Diplômes</h1>
+            <p>Liste des diplômes générés</p>
+        </div>
+
+        {% if diplomas|length > 0 %}
+
+            <div class="diploma-grid">
+
+                {% for diploma in diplomas %}
+                    <div class="diploma-card">
+
+                        <div class="diploma-top">
+
+                            <div class="diploma-badge">
+                                DIPLÔME
+                            </div>
+
+                            <div class="diploma-icon">
+                                <svg fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="2"
+                                     viewBox="0 0 24 24">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                            </div>
+
+                        </div>
+
+                        <div class="diploma-title">
+                            #{{ diploma.id }}
+                        </div>
+
+                        <div class="diploma-sub">
+                            Généré le {{ diploma.generatedAt|date('d/m/Y') }}
+                        </div>
+
+                        <div class="diploma-footer">
+
+                            <div class="status">
+                                <span class="status-dot"></span>
+                                Disponible
+                            </div>
+
+                            <div class="diploma-date">
+                                {{ diploma.generatedAt|date('H:i') }}
+                            </div>
+
+                        </div>
+
+                    </div>
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                Aucun diplôme généré pour le moment.
+            </div>
+
+        {% endif %}
+
+    </main>
+</div>
+{% endblock %}

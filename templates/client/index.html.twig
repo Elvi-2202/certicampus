@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Client{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Espace Client - CertiCampus</h1>
+
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5>Mes Étudiants Certifiés</h5>
+                    <h2>{{ total_certified }}</h2>
+                    <a href="{{ path('app_client_student_list') }}" class="btn btn-light btn-sm">Voir la liste (3.1)</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5>Niveaux de Diplômes</h5>
+                    <h2>{{ total_diplomas }}</h2>
+                    <a href="{{ path('app_client_diploma_list') }}" class="btn btn-light btn-sm">Voir les niveaux (2.1)</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

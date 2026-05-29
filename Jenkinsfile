@@ -2,6 +2,12 @@ pipeline {
     agent any
 
     stages {
+        stages {
+        stage('Clean workspace') {
+            steps {
+                cleanWs()   // ← nettoie le workspace Jenkins avant tout
+            }
+        }
         stage('Start containers') {
             steps {
                 // FORCE LE NETTOYAGE DES ANCIENS CONTAINERS PAR LEUR NOM
@@ -20,7 +26,7 @@ pipeline {
         stage('Composer install') {
             steps {
                 sh 'docker-compose exec -T php ls -R /var/www'
-                sh 'docker-compose exec -T php composer install --no-interaction --prefer-dist'
+                sh 'docker-compose exec -T --workdir /var/www/backend/backend php composer install --no-interaction --prefer-dist'
             }
         }
 

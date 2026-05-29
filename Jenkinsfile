@@ -6,15 +6,9 @@ pipeline {
             steps {
                 sh 'docker rm -f symfony_db symfony_php symfony_nginx || true'
                 sh 'docker-compose down -v || true'
-                sh 'docker-compose up -d --build'
+                sh 'docker rmi certicampus-ci-php || true'
+                sh 'docker-compose up -d --build --no-cache || docker-compose up -d --build'
                 sh 'sleep 15'
-            }
-        }
-
-        stage('Debug') {
-            steps {
-                sh 'echo "=== Workspace Jenkins ===" && ls -la'
-                sh 'echo "=== Dans le container /var/www ===" && docker-compose exec -T php ls -la /var/www'
             }
         }
 

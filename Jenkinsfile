@@ -11,6 +11,13 @@ pipeline {
             }
         }
 
+        stage('Debug') {
+            steps {
+                sh 'echo "=== Workspace Jenkins ===" && ls -la'
+                sh 'echo "=== Dans le container /var/www ===" && docker-compose exec -T php ls -la /var/www'
+            }
+        }
+
         stage('Composer install') {
             steps {
                 sh 'docker-compose exec -T php composer install --no-interaction --prefer-dist'

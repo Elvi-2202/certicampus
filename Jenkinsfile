@@ -2,16 +2,10 @@ pipeline {
     agent any
 
     stages {
-        stage('Clean workspace') {
-            steps {
-                cleanWs()
-            }
-        }
-
         stage('Start containers') {
             steps {
                 sh 'docker rm -f symfony_db symfony_php symfony_nginx || true'
-                sh 'docker-compose down -v'
+                sh 'docker-compose down -v || true'
                 sh 'docker-compose up -d --build'
                 sh 'sleep 15'
             }
@@ -39,7 +33,8 @@ pipeline {
 
     post {
         always {
-            sh 'docker-compose down'
+            sh 'docker-compose down || true'
+            cleanWs()
         }
     }
 }

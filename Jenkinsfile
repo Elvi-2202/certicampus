@@ -19,6 +19,7 @@ pipeline {
         // ... reste de tes étapes (Composer, Database, etc.) ...
         stage('Composer install') {
             steps {
+                sh 'docker-compose exec -T php ls -R /var/www'
                 sh 'docker-compose exec -T php composer install --no-interaction --prefer-dist'
             }
         }

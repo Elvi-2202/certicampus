@@ -22,7 +22,9 @@ services:
     container_name: symfony_php
     working_dir: /var/www
     volumes:
-      - .:/var/www  # <--- IL MANQUAIT CETTE LIGNE
+      - .:/var/www 
+      - /var/www/var/cache
+      - /var/www/var/log
     depends_on:
       - db
 

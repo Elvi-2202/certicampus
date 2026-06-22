@@ -19,7 +19,7 @@ final class DashboardController extends AbstractController
         TrainingRepository $trainingRepo,
     ): Response {
         $lastDiplomas = $diplomaRepo->findBy([], ['generated_at' => 'DESC'], 3);
-        $lastCertified = $certifiedRepo->findBy([], ['graduation_date' => 'DESC'], 3);
+        $lastCertified = $certifiedRepo->findBy([], ['graduationDate' => 'DESC'], 3);
 
         return $this->render('admin/dashboard/index.html.twig', [
             'count_certified'  => $certifiedRepo->count(),

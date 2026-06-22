@@ -20,7 +20,7 @@ class Certified
     private ?string $grade = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $graduation_date = null;
+    private ?\DateTimeImmutable $graduationDate = null;
 
     public function getId(): ?int
     {
@@ -35,7 +35,6 @@ class Certified
     public function setLabel(string $label): static
     {
         $this->label = $label;
-
         return $this;
     }
 
@@ -47,19 +46,17 @@ class Certified
     public function setGrade(string $grade): static
     {
         $this->grade = $grade;
-
         return $this;
     }
 
     public function getGraduationDate(): ?\DateTimeImmutable
     {
-        return $this->graduation_date;
+        return $this->graduationDate;
     }
 
-    public function setGraduationDate(\DateTimeImmutable $graduation_date): static
+    public function setGraduationDate(\DateTimeImmutable $graduationDate): static
     {
-        $this->graduation_date = $graduation_date;
-
+        $this->graduationDate = $graduationDate;
         return $this;
     }
 }

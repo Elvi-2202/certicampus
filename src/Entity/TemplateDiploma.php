@@ -33,4 +33,8 @@ class TemplateDiploma
 
         return $this;
     }
+    public function getLabel(): ?string
+    {
+        return 'Template #' . $this->getId();
+    }
 }

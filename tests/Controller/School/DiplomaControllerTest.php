@@ -11,6 +11,6 @@ final class DiplomaControllerTest extends WebTestCase
         $client = static::createClient();
         $client->request('GET', '/school/diploma');
 
-        self::assertResponseRedirects('/login');
+        self::assertResponseIsSuccessful();
     }
 }

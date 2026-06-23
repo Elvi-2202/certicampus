@@ -1,0 +1,30 @@
+<h1>
+Diplôme
+</h1>
+
+
+<p>
+Certification :
+{{ diploma.certified.label }}
+</p>
+
+
+<p>
+Niveau :
+{{ diploma.certified.grade }}
+</p>
+
+
+<p>
+Date :
+{{ diploma.generatedAt|date('d/m/Y') }}
+</p>
+
+
+<a href="
+{{ path(
+'app_admin_diploma_download',
+{id:diploma.id}
+) }}">
+Télécharger PDF
+</a>

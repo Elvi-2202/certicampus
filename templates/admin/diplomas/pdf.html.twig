@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<style>
+
+body{
+    font-family: Helvetica;
+    text-align:center;
+}
+
+
+.diploma{
+
+    border:10px solid #222;
+    padding:50px;
+    height:450px;
+
+}
+
+
+h1{
+
+font-size:45px;
+
+}
+
+
+.student{
+
+font-size:35px;
+font-weight:bold;
+
+}
+
+
+.footer{
+
+margin-top:50px;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="diploma">
+
+
+<h1>
+CERTIFICAT DE RÉUSSITE
+</h1>
+
+
+<p>
+Nous certifions que
+</p>
+
+
+<div class="student">
+
+{{ student.firstname }}
+{{ student.lastname }}
+
+</div>
+
+
+<p>
+a obtenu le diplôme :
+</p>
+
+
+<h2>
+
+{{ diploma.title }}
+
+</h2>
+
+
+<p>
+
+Spécialité :
+
+{{ diploma.speciality.name }}
+
+</p>
+
+
+<div class="footer">
+
+Date :
+{{ "now"|date("d/m/Y") }}
+
+</div>
+
+
+</div>
+
+
+</body>
+
+</html>

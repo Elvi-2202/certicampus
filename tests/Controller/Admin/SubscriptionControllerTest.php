@@ -11,6 +11,6 @@ final class SubscriptionControllerTest extends WebTestCase
         $client = static::createClient();
         $client->request('GET', '/admin/subscription');
 
-        self::assertResponseIsSuccessful();
+        self::assertResponseRedirects('/login');
     }
 }

@@ -11,6 +11,6 @@ final class TemplateControllerTest extends WebTestCase
         $client = static::createClient();
         $client->request('GET', '/admin/template');
 
-        self::assertResponseIsSuccessful();
+        self::assertResponseRedirects('/login');
     }
 }

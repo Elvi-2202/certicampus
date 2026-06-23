@@ -11,6 +11,6 @@ final class ClientControllerTest extends WebTestCase
         $client = static::createClient();
         $client->request('GET', '/client/dashboard');
 
-        self::assertResponseIsSuccessful();
+        self::assertResponseRedirects('/login');
     }
 }

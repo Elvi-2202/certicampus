@@ -11,6 +11,6 @@ final class TrainingControllerTest extends WebTestCase
         $client = static::createClient();
         $client->request('GET', '/school/training');
 
-        self::assertResponseIsSuccessful();
+        self::assertResponseRedirects('/login');
     }
 }

@@ -11,6 +11,6 @@ final class CertifiedControllerTest extends WebTestCase
         $client = static::createClient();
         $client->request('GET', '/client/diplomes');
 
-        self::assertResponseIsSuccessful();
+        self::assertResponseRedirects('/login');
     }
 }

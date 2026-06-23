@@ -21,8 +21,10 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
-# Copie le projet dans l'image
 COPY . .
+
+# Fix permissions
+RUN mkdir -p var/cache var/log && chmod -R 777 var
 
 EXPOSE 9000
 CMD ["php-fpm"]

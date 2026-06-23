@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+{% import 'admin/macros.html.twig' as ui %}
+{% block title %}Nouveau template — Certicampus{% endblock %}
+{% block stylesheets %}{{ ui.sidebar('templates') | raw }}{% endblock %}
+{% block body %}
+<div class="layout">
+  {{ ui.sidebar('templates') | raw }}
+  <main class="main">
+    <div class="page-header">
+      <div><h1>Nouveau template de diplôme</h1></div>
+      <a href="{{ path('app_admin_template_diplomas') }}" class="btn btn-outline">← Retour</a>
+    </div>
+
+    <div style="display:flex; gap:2rem; align-items:flex-start; flex-wrap:wrap;">
+
+      {# ── FORMULAIRE ── #}
+      <div style="flex:1; min-width:300px;">
+        {{ form_start(form, {attr: {id: 'diploma-form'}}) }}
+          <div style="display:flex; flex-direction:column; gap:1rem;">
+            {% for field in form %}
+              <div>
+                {{ form_label(field) }}
+                {{ form_widget(field, {attr: {style: 'width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:6px;'}}) }}
+                {{ form_errors(field) }}
+              </div>
+            {% endfor %}
+          </div>
+          <div style="margin-top:1.5rem;">
+            <button type="submit" class="btn">💾 Enregistrer le diplôme</button>
+          </div>
+        {{ form_end(form) }}
+      </div>
+
+      {# ── APERÇU DIPLÔME ── #}
+      <div style="flex:1; min-width:400px;">
+        <p style="color:#888; margin-bottom:0.5rem;">Aperçu en temps réel</p>
+        <div id="diploma-preview" style="
+          background:#f5f3eb;
+          border: 8px solid #a8b8d8;
+          padding: 2rem;
+          font-family: Georgia, serif;
+          color: #2c3e6b;
+          position: relative;
+          min-height: 380px;
+          box-shadow: inset 0 0 0 4px #c5d0e8;
+        ">
+          {# Coins décoratifs #}
+          <div style="position:absolute;top:8px;left:8px;width:30px;height:30px;border-top:3px solid #a8b8d8;border-left:3px solid #a8b8d8;"></div>
+          <div style="position:absolute;top:8px;right:8px;width:30px;height:30px;border-top:3px solid #a8b8d8;border-right:3px solid #a8b8d8;"></div>
+          <div style="position:absolute;bottom:8px;left:8px;width:30px;height:30px;border-bottom:3px solid #a8b8d8;border-left:3px solid #a8b8d8;"></div>
+          <div style="position:absolute;bottom:8px;right:8px;width:30px;height:30px;border-bottom:3px solid #a8b8d8;border-right:3px solid #a8b8d8;"></div>
+
+          <div style="text-align:center;">
+            <h2 style="font-size:1.4rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:0.5rem;">Diplôme d'Études Supérieures</h2>
+            <div style="font-size:0.75rem; color:#7a8ab0; margin-bottom:1.2rem;">⚙ Logo du collège</div>
+            <p style="font-size:0.95rem; margin-bottom:0.3rem;">Le diplôme est remis à</p>
+            <div id="prev-student" style="font-family:'Dancing Script', cursive; font-size:2rem; margin:0.3rem 0;">Jean Dupont</div>
+            <p style="font-size:0.85rem; margin:0.8rem auto; max-width:280px;" id="prev-school">
+              Pour avoir terminé avec succès le programme de l'École supérieure d'art.
+            </p>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; margin-top:2rem; font-size:0.8rem; text-align:center;">
+            <div>
+              <strong id="prev-director">François Dubois</strong><br>
+              <span style="color:#7a8ab0;">Directeur</span>
+            </div>
+            <div>
+              <span id="prev-date">Certifié le : 17/01/2025</span><br>
+              <span>Identifiant : <span id="prev-id">XXXXXXXX</span></span>
+            </div>
+            <div>
+              <strong id="prev-adjoint">Jacques Leclair</strong><br>
+              <span style="color:#7a8ab0;">Directeur adjoint</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function q(id) { return document.getElementById(id); }
+      function bind(inputName, previewId, transform) {
+        const el = document.querySelector('[name$="[' + inputName + ']"]');
+        if (!el) return;
+        el.addEventListener('input', function() {
+          q(previewId).textContent = transform ? transform(this.value) : this.value;
+        });
+      }
+      bind('studentName',           'prev-student');
+      bind('directorName',          'prev-director');
+      bind('assistantDirectorName', 'prev-adjoint');
+      bind('identifier',            'prev-id');
+      bind('schoolName', 'prev-school', function(v) {
+        return 'Pour avoir terminé avec succès le programme de ' + (v || 'l\'École supérieure d\'art') + '.';
+      });
+      const dateEl = document.querySelector('[name$="[certificateDate]"]');
+      if (dateEl) {
+        dateEl.addEventListener('change', function() {
+          if (this.value) {
+            const d = new Date(this.value);
+            q('prev-date').textContent = 'Certifié le : ' + d.toLocaleDateString('fr-FR');
+          }
+        });
+      }
+    </script>
+  </main>
+</div>
+{% endblock %}

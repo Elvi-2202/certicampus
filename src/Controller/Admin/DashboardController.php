@@ -30,4 +30,4 @@ final class DashboardController extends AbstractController
             'last_certified'   => $lastCertified,
         ]);
     }
-}
+} 

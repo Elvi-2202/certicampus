@@ -1,42 +1,66 @@
 pipeline {
     agent any
 
+    environment {
+        PHP_CONTAINER = 'symfony_php'
+    }
+
     stages {
-        stage('Start containers') {
+
+        stage('Checkout') {
             steps {
-                sh 'docker rm -f symfony_db symfony_php symfony_nginx || true'
-                sh 'docker-compose down -v || true'
-                sh 'docker volume rm certicampus-ci_db_data || true'
-                sh 'docker rmi certicampus-ci-php || true'
-                sh 'docker-compose up -d --build'
-                sh 'sleep 15'
+                echo 'Récupération du code source...'
+                checkout scm
             }
         }
 
-        stage('Composer install') {
+        stage('Build') {
             steps {
-                sh 'docker-compose exec -T php composer install --no-interaction --prefer-dist'
+                echo 'Lancement des containers Docker...'
+                sh 'docker compose up -d --build'
             }
         }
 
-        stage('Database Setup') {
+        stage('Install Dependencies') {
             steps {
-                sh 'docker-compose exec -T php php bin/console doctrine:database:create --if-not-exists || true'
-                sh 'docker-compose exec -T php php bin/console doctrine:migrations:migrate --no-interaction'
+                echo 'Installation des dépendances Composer...'
+                sh 'docker compose exec -T php composer install --no-interaction --prefer-dist'
             }
         }
 
-        stage('Verify App') {
+        stage('Cache Warmup') {
             steps {
-                sh 'docker-compose exec -T php php bin/console about'
+                echo 'Réchauffement du cache Symfony...'
+                sh 'docker compose exec -T php php bin/console cache:warmup --env=test'
             }
         }
+
+        stage('Database Migration') {
+            steps {
+                echo 'Exécution des migrations...'
+                sh 'docker compose exec -T php php bin/console doctrine:migrations:migrate --no-interaction --env=test'
+            }
+        }
+
+        stage('Tests') {
+            steps {
+                echo 'Lancement des tests PHPUnit...'
+                sh 'docker compose exec -T php php bin/phpunit --testdox'
+            }
+        }
+
     }
 
     post {
+        success {
+            echo '✅ Pipeline terminé avec succès !'
+        }
+        failure {
+            echo '❌ Pipeline échoué — vérifiez les logs.'
+        }
         always {
-            sh 'docker-compose down -v || true'
-            cleanWs()
+            echo 'Nettoyage...'
+            sh 'docker compose down'
         }
     }
 }

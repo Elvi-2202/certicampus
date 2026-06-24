@@ -1,7 +1,9 @@
 <?php
 namespace App\Form;
 
+use App\Entity\Certified;
 use App\Entity\TemplateDiploma;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -13,6 +15,13 @@ class TemplateDiplomaType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('certified', EntityType::class, [
+                'class' => Certified::class,
+                'choice_label' => 'label',
+                'label' => 'Étudiant certifié',
+                'mapped' => false,
+                'required' => true,
+            ])
             ->add('studentName', TextType::class, [
                 'label' => 'Nom de l\'étudiant',
                 'attr'  => ['placeholder' => 'Ex: Jean Dupont'],
@@ -28,10 +37,6 @@ class TemplateDiplomaType extends AbstractType
             ->add('assistantDirectorName', TextType::class, [
                 'label' => 'Nom du directeur adjoint',
                 'attr'  => ['placeholder' => 'Ex: Jacques Leclair'],
-            ])
-            ->add('identifier', TextType::class, [
-                'label' => 'Identifiant',
-                'attr'  => ['placeholder' => 'Ex: XXXXXXXX'],
             ])
             ->add('certificateDate', DateType::class, [
                 'label'  => 'Date de certification',

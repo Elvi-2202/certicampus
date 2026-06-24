@@ -2,8 +2,8 @@
 
 namespace App\Controller\Client;
 
-use App\Repository\CertifiedRepository;
 use App\Repository\DiplomaRepository;
+use App\Repository\CertifiedRepository;
 use App\Repository\SpecialityRepository;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -70,14 +70,6 @@ final class DashboardController extends AbstractController
         return $this->render('client/diploma/index.html.twig', [
             'diplomas'     => $diplomaRepo->findAll(),
             'specialities' => $specRepo->findAll(),
-        ]);
-    }
-
-    #[Route('/etudiants', name: 'app_client_student_list')]
-    public function students(CertifiedRepository $certifiedRepo): Response
-    {
-        return $this->render('client/student/index.html.twig', [
-            'certified_students' => $certifiedRepo->findAll(),
         ]);
     }
 

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\CertifiedRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: CertifiedRepository::class)]
 class Certified
@@ -12,6 +13,9 @@ class Certified
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(type: 'uuid', unique: true)]
+    private ?Uuid $uuid = null;
 
     #[ORM\Column(length: 255)]
     private ?string $label = null;
@@ -22,9 +26,19 @@ class Certified
     #[ORM\Column]
     private ?\DateTimeImmutable $graduationDate = null;
 
+    public function __construct()
+    {
+        $this->uuid = Uuid::v4();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getUuid(): ?Uuid
+    {
+        return $this->uuid;
     }
 
     public function getLabel(): ?string

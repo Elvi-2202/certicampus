@@ -29,11 +29,15 @@ class TemplateDiplomaController extends AbstractController
         $template = new TemplateDiploma();
         $form = $this->createForm(TemplateDiplomaType::class, $template);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
+            $certified = $form->get('certified')->getData();
+            $template->setIdentifier((string) $certified->getUuid());
             $em->persist($template);
             $em->flush();
             return $this->redirectToRoute('app_admin_template_diplomas');
         }
+
         return $this->render('admin/templates/new.html.twig', [
             'form' => $form,
         ]);

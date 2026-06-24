@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CertiCampus — Plateforme de gestion de certifications numériques pour les établissements d'enseignement.">
+  <title>CertiCampus — Certifications Numériques</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0d0d0d;
+      --white: #ffffff;
+      --green: #c8f564;
+      --green-dark: #a8d444;
+      --grey-100: #f7f7f5;
+      --grey-200: #efefec;
+      --grey-400: #999990;
+      --grey-700: #3a3a38;
+      --radius: 14px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--white); color: var(--black); line-height: 1.6; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2.5rem; height: 64px;
+      background: rgba(13,13,13,0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .logo { font-family: 'Sora', sans-serif; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.5px; text-decoration: none; }
+    .logo .certi { color: #ffffff; }
+    .logo .campus { color: var(--green); }
+
+    .nav-actions { display: flex; gap: 10px; align-items: center; }
+
+    .btn-ghost {
+      padding: 8px 18px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;
+      color: #fff; background: transparent; font-size: 13px; font-weight: 500;
+      text-decoration: none; transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--green); color: var(--green); }
+
+    .btn-primary {
+      padding: 8px 20px; border: none; border-radius: 8px;
+      background: var(--green); color: var(--black);
+      font-size: 13px; font-weight: 600; text-decoration: none; transition: opacity 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh; background: var(--black);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 100px 2rem 4rem; position: relative; overflow: hidden;
+    }
+
+    .hero::before {
+      content: ''; position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(200,245,100,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 14px; border: 1px solid rgba(200,245,100,0.3);
+      border-radius: 20px; font-size: 12px; font-weight: 500;
+      color: var(--green); margin-bottom: 2rem; letter-spacing: 0.5px;
+    }
+
+    .hero h1 {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(2.4rem, 6vw, 5rem);
+      font-weight: 800; color: #fff; line-height: 1.05;
+      letter-spacing: -2px; max-width: 800px; margin-bottom: 1.5rem;
+    }
+    .hero h1 em { font-style: normal; color: var(--green); }
+
+    .hero-sub { font-size: clamp(1rem, 2vw, 1.15rem); color: var(--grey-400); max-width: 540px; margin-bottom: 0.75rem; line-height: 1.7; }
+    .hero-sub-en { font-size: 0.95rem; color: #555; max-width: 540px; margin-bottom: 2.5rem; line-height: 1.7; font-style: italic; }
+
+    .hero-cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    .btn-hero-primary {
+      padding: 14px 32px; background: var(--green); color: var(--black);
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+      text-decoration: none; transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-hero-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .btn-hero-ghost {
+      padding: 14px 32px; background: transparent; color: #fff;
+      border: 1px solid rgba(255,255,255,0.2); border-radius: 10px;
+      font-size: 15px; font-weight: 500; text-decoration: none; transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-hero-ghost:hover { border-color: var(--green); color: var(--green); }
+
+    .hero-scroll {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      color: #444; font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* SECTIONS */
+    .section { padding: 6rem 2rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    .section-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--green-dark); margin-bottom: 1rem; }
+    .section-title { font-family: 'Sora', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -1px; color: var(--black); margin-bottom: 1.5rem; line-height: 1.15; }
+
+    /* ABOUT */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+
+    .about-text p { font-size: 1.05rem; color: var(--grey-700); margin-bottom: 1rem; line-height: 1.75; }
+
+    .lang-tag { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; margin-bottom: 0.75rem; }
+    .lang-fr { background: #e8f4fd; color: #1a5fa0; }
+    .lang-en { background: #f0fde4; color: #3a7a00; }
+
+    .about-features { display: flex; flex-direction: column; gap: 1rem; }
+
+    .feature-card {
+      background: var(--grey-100); border: 1px solid var(--grey-200);
+      border-radius: var(--radius); padding: 1.25rem 1.5rem;
+      display: flex; align-items: flex-start; gap: 1rem; transition: border-color 0.2s;
+    }
+    .feature-card:hover { border-color: var(--green); }
+
+    .feature-icon { width: 40px; height: 40px; background: var(--green); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .feature-icon svg { width: 18px; height: 18px; }
+    .feature-title { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600; color: var(--black); margin-bottom: 4px; }
+    .feature-desc { font-size: 13px; color: var(--grey-400); line-height: 1.5; }
+
+    /* HOW */
+    .how-section { background: var(--black); padding: 6rem 2rem; }
+    .how-section .section-eyebrow { color: var(--green); }
+    .how-section .section-title { color: #fff; }
+
+    .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+
+    .step-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: var(--radius); padding: 2rem 1.5rem; transition: border-color 0.2s; }
+    .step-card:hover { border-color: var(--green); }
+
+    .step-number { font-family: 'Sora', sans-serif; font-size: 3rem; font-weight: 800; color: rgba(200,245,100,0.15); line-height: 1; margin-bottom: 1rem; }
+    .step-title { font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 600; color: #fff; margin-bottom: 0.5rem; }
+    .step-desc { font-size: 13px; color: #666; line-height: 1.6; }
+
+    /* ROLES */
+    .roles-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 3rem; }
+
+    .role-card { border-radius: var(--radius); padding: 2.5rem; border: 1px solid var(--grey-200); }
+    .role-card.client { background: var(--grey-100); }
+    .role-card.admin { background: var(--black); color: #fff; border-color: #2a2a2a; }
+
+    .role-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem; }
+    .role-card.client .role-label { color: var(--green-dark); }
+    .role-card.admin .role-label { color: var(--green); }
+
+    .role-title { font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.5px; }
+
+    .role-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .role-list li { font-size: 13px; display: flex; align-items: center; gap: 8px; }
+    .role-card.client .role-list li { color: var(--grey-700); }
+    .role-card.admin .role-list li { color: #aaa; }
+    .role-list li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+
+    /* CTA */
+    .cta-section { background: var(--green); padding: 5rem 2rem; text-align: center; }
+    .cta-section h2 { font-family: 'Sora', sans-serif; font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 800; color: var(--black); letter-spacing: -1px; margin-bottom: 1rem; }
+    .cta-section p { font-size: 1.05rem; color: rgba(13,13,13,0.65); margin-bottom: 2rem; }
+    .cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    .btn-cta-dark { padding: 14px 32px; background: var(--black); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; text-decoration: none; transition: opacity 0.2s; }
+    .btn-cta-dark:hover { opacity: 0.8; }
+
+    .btn-cta-outline { padding: 14px 32px; background: transparent; color: var(--black); border: 2px solid rgba(13,13,13,0.25); border-radius: 10px; font-size: 15px; font-weight: 600; text-decoration: none; transition: border-color 0.2s; }
+    .btn-cta-outline:hover { border-color: var(--black); }
+
+    /* FOOTER */
+    footer { background: var(--black); padding: 2.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    footer p { font-size: 12px; color: #444; }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 1.25rem; }
+      .about-grid, .roles-grid { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .hero { padding: 90px 1.25rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+{# NAV #}
+<nav>
+  <a href="{{ path('app_home') }}" class="logo">
+    <span class="certi">Certi</span><span class="campus">campus</span>
+  </a>
+  <div class="nav-actions">
+    <a href="{{ path('app_login') }}" class="btn-ghost">Se connecter</a>
+    <a href="{{ path('app_register') }}" class="btn-primary">S'inscrire</a>
+  </div>
+</nav>
+
+{# HERO #}
+<section class="hero">
+  <div class="hero-badge">
+    <svg width="10" height="10" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+    Plateforme de certifications numériques
+  </div>
+  <h1>Générez et gérez vos <em>diplômes numériques</em> en toute simplicité</h1>
+  <p class="hero-sub">
+    CertiCampus permet aux établissements d'enseignement de digitaliser leur processus de diplomation : génération, gestion et envoi de certifications sécurisées avec QR code.
+  </p>
+  <p class="hero-sub-en">
+    CertiCampus empowers educational institutions to digitise their certification process — generate, manage and deliver secure diplomas with unique QR codes.
+  </p>
+  <div class="hero-cta">
+    <a href="{{ path('app_register') }}" class="btn-hero-primary">Commencer gratuitement</a>
+    <a href="#about" class="btn-hero-ghost">Découvrir la plateforme</a>
+  </div>
+  <div class="hero-scroll">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    Défiler
+  </div>
+</section>
+
+{# ABOUT #}
+<section class="section" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text">
+        <div class="section-eyebrow">À propos du projet</div>
+        <h2 class="section-title">Une plateforme pensée pour les établissements</h2>
+
+        <span class="lang-tag lang-fr">FR</span>
+        <p>CertiCampus est une plateforme de gestion de certifications numériques destinée aux établissements d'enseignement — écoles, universités et centres de formation. Elle vise à digitaliser intégralement le processus de génération, de gestion et d'envoi des diplômes aux étudiants.</p>
+        <p>Chaque certificat est sécurisé par un QR code unique garantissant son authenticité. Les établissements peuvent gérer l'envoi en masse ou individualisé, accéder à des statistiques de réussite et personnaliser leurs templates de diplômes.</p>
+
+        <span class="lang-tag lang-en">EN</span>
+        <p style="font-style:italic; color:#888;">CertiCampus is a digital certification management platform for educational institutions — schools, universities and training centres. It fully digitises the process of generating, managing and delivering diplomas to students.</p>
+        <p style="font-style:italic; color:#888;">Each certificate is secured with a unique QR code to guarantee its authenticity. Institutions can manage bulk or individual sending, access success statistics and customise diploma templates.</p>
+      </div>
+
+      <div class="about-features">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div>
+            <div class="feature-title">Génération de diplômes</div>
+            <div class="feature-desc">Créez et envoyez des certifications numériques personnalisées en quelques clics.</div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          </div>
+          <div>
+            <div class="feature-title">QR Code d'authenticité</div>
+            <div class="feature-desc">Chaque diplôme intègre un QR code unique pour garantir sa validité.</div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          </div>
+          <div>
+            <div class="feature-title">Import Excel en masse</div>
+            <div class="feature-desc">Importez vos listes d'étudiants via fichier Excel pour générer en lot.</div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div>
+            <div class="feature-title">Statistiques détaillées</div>
+            <div class="feature-desc">Suivez les taux de réussite et les certifications générées en temps réel.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# HOW IT WORKS #}
+<section class="how-section">
+  <div class="container">
+    <div class="section-eyebrow">Comment ça marche</div>
+    <h2 class="section-title">Simple, rapide, sécurisé</h2>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">01</div>
+        <div class="step-title">Inscrivez votre établissement</div>
+        <div class="step-desc">Créez votre compte en quelques minutes et configurez votre espace établissement.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-number">02</div>
+        <div class="step-title">Importez vos données</div>
+        <div class="step-desc">Téléversez votre fichier Excel avec la liste de vos étudiants et leurs informations.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-number">03</div>
+        <div class="step-title">Générez et envoyez</div>
+        <div class="step-desc">Sélectionnez les étudiants, générez les diplômes PDF sécurisés et envoyez-les par e-mail.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ROLES #}
+<section class="section">
+  <div class="container">
+    <div class="section-eyebrow">Deux interfaces</div>
+    <h2 class="section-title">Conçu pour chaque acteur</h2>
+    <div class="roles-grid">
+      <div class="role-card client">
+        <div class="role-label">Établissements / Écoles</div>
+        <div class="role-title">Interface Client</div>
+        <ul class="role-list">
+          <li>Tableau de bord avec statistiques</li>
+          <li>Gestion des étudiants</li>
+          <li>Import Excel en masse</li>
+          <li>Génération et envoi de diplômes</li>
+          <li>Personnalisation des templates</li>
+          <li>Suivi des taux de réussite</li>
+        </ul>
+      </div>
+      <div class="role-card admin">
+        <div class="role-label">Administrateurs</div>
+        <div class="role-title">Interface Admin</div>
+        <ul class="role-list">
+          <li>Gestion des établissements partenaires</li>
+          <li>Suivi des abonnements et paiements</li>
+          <li>Statistiques globales de la plateforme</li>
+          <li>Gestion des templates de diplômes</li>
+          <li>Contrôle des certifications délivrées</li>
+          <li>Administration des utilisateurs</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# CTA FINAL #}
+<section class="cta-section">
+  <div class="container">
+    <h2>Prêt à digitaliser vos certifications ?</h2>
+    <p>Rejoignez les établissements qui font confiance à CertiCampus.</p>
+    <div class="cta-buttons">
+      <a href="{{ path('app_register') }}" class="btn-cta-dark">Créer un compte</a>
+      <a href="{{ path('app_login') }}" class="btn-cta-outline">Se connecter</a>
+    </div>
+  </div>
+</section>
+
+{# FOOTER #}
+<footer>
+  <a href="{{ path('app_home') }}" class="logo">
+    <span class="certi">Certi</span><span class="campus">campus</span>
+  </a>
+  <p>© 2025–2026 CertiCampus — Master 1 Développement Web, H3 Hitema</p>
+  <p>Guillaume MANITRA · Mohamed OUFINTE</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+{% import 'admin/macros.html.twig' as ui %}
+{% block title %}{{ title }} — Certicampus{% endblock %}
+{% block stylesheets %}{{ ui.sidebar('subscriptions') | raw }}{% endblock %}
+{% block body %}
+<div class="layout">
+    {{ ui.sidebar('subscriptions') | raw }}
+    <main class="main">
+        <div class="page-header">
+            <div><h1>{{ title }}</h1></div>
+            <a href="{{ path('app_admin_subscriptions') }}" class="btn btn-outline">← Retour</a>
+        </div>
+
+        <div style="max-width:560px;">
+            {{ form_start(form) }}
+            <div style="display:flex; flex-direction:column; gap:1rem;">
+                {% for field in form %}
+                    <div>
+                        {{ form_label(field) }}
+                        {{ form_widget(field, {attr: {style: 'width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:6px;'}}) }}
+                        {{ form_errors(field) }}
+                    </div>
+                {% endfor %}
+            </div>
+            <div style="margin-top:1.5rem;">
+                <button type="submit" class="btn">💾 Enregistrer</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </main>
+</div>
+{% endblock %}

@@ -1,20 +1,135 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Hello SubscriptionController!{% endblock %}
-
-{% block body %}
+{% import 'admin/macros.html.twig' as ui %}
+{% block title %}Abonnements — Certicampus{% endblock %}
+{% block stylesheets %}{{ ui.sidebar('subscriptions') | raw }}
 <style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2rem; }
+.pricing-card { background: #fff; border-radius: 16px; border: 1px solid #ebebeb; padding: 2rem; display: flex; flex-direction: column; gap: 1.25rem; position: relative; }
+.pricing-card.popular { border: 2px solid #c8f564; }
+.popular-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #c8f564; color: #1a1a1a; font-size: 11px; font-weight: 700; padding: 4px 14px; border-radius: 999px; white-space: nowrap; }
+.pricing-name { font-size: 16px; font-weight: 600; color: #1a1a1a; }
+.pricing-price { font-size: 36px; font-weight: 700; color: #1a1a1a; }
+.pricing-price span { font-size: 14px; font-weight: 400; color: #888; }
+.pricing-desc { font-size: 13px; color: #888; }
+.pricing-features { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; flex: 1; }
+.pricing-features li { font-size: 13px; color: #444; display: flex; align-items: center; gap: 8px; }
+.pricing-features li::before { content: '✓'; color: #3a7a00; font-weight: 700; }
+.pricing-btn { display: block; text-align: center; padding: 10px; background: #1a1a1a; color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none; cursor: pointer; border: none; width: 100%; }
+.pricing-card.popular .pricing-btn { background: #c8f564; color: #1a1a1a; }
 </style>
+{% endblock %}
+{% block body %}
+<div class="layout">
+    {{ ui.sidebar('subscriptions') | raw }}
+    <main class="main">
+        <div class="page-header">
+            <div>
+                <h1>Abonnements</h1>
+                <p>Gérez les offres disponibles pour les établissements</p>
+            </div>
+        </div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        {% for message in app.flashes('success') %}
+            <div class="badge badge-green" style="padding:10px 16px; border-radius:8px; margin-bottom:1rem; display:block;">{{ message }}</div>
+        {% endfor %}
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/manin/Desktop/certicampus/backend/src/Controller/Admin/SubscriptionController.php</code></li>
-        <li>Your template at <code>C:/Users/manin/Desktop/certicampus/backend/templates/admin//subscription/index.html.twig</code></li>
-    </ul>
+        <div class="pricing-grid">
+
+            <div class="pricing-card">
+                <div>
+                    <div class="pricing-name">Basique</div>
+                    <div class="pricing-desc">Pour les petits établissements</div>
+                </div>
+                <div class="pricing-price">29€ <span>/ mois</span></div>
+                <ul class="pricing-features">
+                    <li>Jusqu'à 50 certificats / mois</li>
+                    <li>QR code d'authentification</li>
+                    <li>Téléchargement PDF</li>
+                    <li>1 utilisateur</li>
+                    <li>Support par email</li>
+                </ul>
+                <button class="pricing-btn" onclick="openModal('basique')">Sélectionner</button>
+            </div>
+
+            <div class="pricing-card popular">
+                <div class="popular-badge">⭐ Populaire</div>
+                <div>
+                    <div class="pricing-name">Pro</div>
+                    <div class="pricing-desc">Pour les établissements en croissance</div>
+                </div>
+                <div class="pricing-price">99€ <span>/ mois</span></div>
+                <ul class="pricing-features">
+                    <li>Certificats illimités</li>
+                    <li>QR code d'authentification</li>
+                    <li>Téléchargement PDF</li>
+                    <li>5 utilisateurs</li>
+                    <li>Templates personnalisés</li>
+                    <li>Support prioritaire</li>
+                </ul>
+                <button class="pricing-btn" onclick="openModal('pro')">Sélectionner</button>
+            </div>
+
+            <div class="pricing-card">
+                <div>
+                    <div class="pricing-name">Annuel</div>
+                    <div class="pricing-desc">La solution complète, au meilleur prix</div>
+                </div>
+                <div class="pricing-price">799€ <span>/ an</span></div>
+                <ul class="pricing-features">
+                    <li>Certificats illimités</li>
+                    <li>QR code d'authentification</li>
+                    <li>Téléchargement PDF</li>
+                    <li>Utilisateurs illimités</li>
+                    <li>Templates personnalisés</li>
+                    <li>Support dédié 24/7</li>
+                    <li>2 mois offerts</li>
+                </ul>
+                <button class="pricing-btn" onclick="openModal('annuel')">Sélectionner</button>
+            </div>
+
+        </div>
+    </main>
 </div>
+
+<div id="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:100; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:16px; padding:2rem; max-width:420px; width:100%; box-shadow:0 8px 32px rgba(0,0,0,0.12);">
+        <h2 style="font-size:18px; font-weight:600; margin-bottom:1.5rem;">Assigner à une école</h2>
+        <form method="POST" id="assign-form">
+            <input type="hidden" name="_token" id="csrf-token">
+            <div style="margin-bottom:1rem;">
+                <label style="font-size:13px; color:#888; display:block; margin-bottom:6px;">École</label>
+                <select name="school_id" style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:6px; font-size:14px;">
+                    <option value="">-- Choisir une école --</option>
+                    {% for school in schools %}
+                        <option value="{{ school.id }}">{{ school.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:1.5rem;">
+                <button type="submit" class="btn" style="flex:1;">Confirmer</button>
+                <button type="button" onclick="closeModal()" class="btn btn-outline" style="flex:1;">Annuler</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const plans = {
+    basique: { id: {{ subscriptions[0] is defined ? subscriptions[0].id : 'null' }}, token: '{{ subscriptions[0] is defined ? csrf_token("assign_" ~ subscriptions[0].id) : "" }}' },
+    pro:     { id: {{ subscriptions[1] is defined ? subscriptions[1].id : 'null' }}, token: '{{ subscriptions[1] is defined ? csrf_token("assign_" ~ subscriptions[1].id) : "" }}' },
+    annuel:  { id: {{ subscriptions[2] is defined ? subscriptions[2].id : 'null' }}, token: '{{ subscriptions[2] is defined ? csrf_token("assign_" ~ subscriptions[2].id) : "" }}' },
+};
+
+function openModal(plan) {
+    const p = plans[plan];
+    if (!p.id) return alert('Abonnement non trouvé en base, créez-le d\'abord.');
+    document.getElementById('assign-form').action = '/admin/subscriptions/' + p.id + '/assign';
+    document.getElementById('csrf-token').value = p.token;
+    document.getElementById('modal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+}
+</script>
 {% endblock %}

@@ -9,7 +9,7 @@ final class TemplateControllerTest extends WebTestCase
     public function testIndex(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/admin/template');
+        $client->request('GET', '/admin/template-diplomas');
 
         self::assertResponseRedirects('/login');
     }

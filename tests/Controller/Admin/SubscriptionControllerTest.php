@@ -9,7 +9,7 @@ final class SubscriptionControllerTest extends WebTestCase
     public function testIndex(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/admin/subscription');
+        $client->request('GET', '/admin/subscriptions');
 
         self::assertResponseRedirects('/login');
     }

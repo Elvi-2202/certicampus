@@ -1,45 +1,269 @@
-{# ============================================================ #}
-{# templates/admin/users/index.html.twig                        #}
-{# ============================================================ #}
 {% extends 'base.html.twig' %}
 {% import 'admin/macros.html.twig' as ui %}
+
 {% block title %}Utilisateurs — Certicampus{% endblock %}
-{% block stylesheets %}{{ ui.sidebar('users') | raw }}{% endblock %}
+
 {% block body %}
 <div class="layout">
-  {{ ui.sidebar('users') | raw }}
-  <main class="main">
-    <div class="page-header">
-      <div><h1>Utilisateurs</h1><p>{{ users|length }} compte(s)</p></div>
-    </div>
-    <div class="search-bar"><input type="text" id="search" placeholder="Rechercher..." onkeyup="filterTable()"></div>
-    <div class="table-wrap">
-      {% if users is empty %}<div class="empty">Aucun utilisateur enregistré.</div>
-      {% else %}
-      <table id="table">
-        <thead><tr><th>#</th><th>Nom</th><th>Email</th><th>Rôles</th></tr></thead>
-        <tbody>
-        {% for u in users %}
-        <tr>
-          <td style="color:#aaa;">{{ u.id }}</td>
-          <td><strong>{{ u.firstname }} {{ u.lastname }}</strong></td>
-          <td style="color:#555;">{{ u.email }}</td>
-          <td>
-            {% for role in u.roles %}
-              {% if role != 'ROLE_USER' %}
-                <span class="badge badge-blue">{{ role }}</span>
-              {% else %}
-                <span class="badge badge-gray">{{ role }}</span>
-              {% endif %}
-            {% endfor %}
-          </td>
-        </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-      {% endif %}
-    </div>
-  </main>
+
+    {{ ui.sidebar('users') | raw }}
+
+    <main class="main">
+
+        <div class="page-header">
+            <div>
+                <h1>Utilisateurs</h1>
+                <p>{{ users|length }} compte(s)</p>
+            </div>
+        </div>
+
+        <div class="search-bar">
+            <input
+                type="text"
+                id="search"
+                placeholder="Rechercher..."
+                onkeyup="filterTable()"
+            >
+        </div>
+
+        <div class="table-wrap">
+
+            {% if users is empty %}
+                <div class="empty">
+                    Aucun utilisateur enregistré.
+                </div>
+            {% else %}
+
+                <table id="table">
+
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Rôles</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for u in users %}
+                        <tr>
+
+                            <td style="color:#aaa;">
+                                {{ u.id }}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    {{ u.firstname }}
+                                    {{ u.lastname }}
+                                </strong>
+                            </td>
+
+                            <td style="color:#555;">
+                                {{ u.email }}
+                            </td>
+
+                            <td>
+                                {% if 'ROLE_ADMIN' in u.roles %}
+                                    <span class="badge badge-blue">
+                                        ADMIN
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-gray">
+                                        USER
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td class="actions">
+
+                                {% if app.user.id != u.id %}
+
+                                    <form
+                                        method="post"
+                                        action="{{ path('app_admin_users_toggle_role', {id: u.id}) }}"
+                                        style="display:inline;"
+                                    >
+                                        <input
+                                            type="hidden"
+                                            name="_token"
+                                            value="{{ csrf_token('role' ~ u.id) }}"
+                                        >
+
+                                        {% if 'ROLE_ADMIN' in u.roles %}
+                                            <button
+                                                type="submit"
+                                                class="btn btn-warning"
+                                            >
+                                                Mettre en USER
+                                            </button>
+                                        {% else %}
+                                            <button
+                                                type="submit"
+                                                class="btn btn-primary"
+                                            >
+                                                Mettre en ADMIN
+                                            </button>
+                                        {% endif %}
+                                    </form>
+
+                                    <form
+                                        method="post"
+                                        action="{{ path('app_admin_users_delete', {id: u.id}) }}"
+                                        style="display:inline;"
+                                        onsubmit="return confirm('Supprimer cet utilisateur ?');"
+                                    >
+                                        <input
+                                            type="hidden"
+                                            name="_token"
+                                            value="{{ csrf_token('delete' ~ u.id) }}"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-danger"
+                                        >
+                                            Supprimer
+                                        </button>
+                                    </form>
+
+                                {% else %}
+
+                                    <span style="color:#999;">
+                                        Votre compte
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            {% endif %}
+
+        </div>
+
+    </main>
+
 </div>
-<script>function filterTable(){const q=document.getElementById('search').value.toLowerCase();document.querySelectorAll('#table tbody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q)?'':'none');}</script>
+
+<script>
+function filterTable() {
+    const q = document
+        .getElementById('search')
+        .value
+        .toLowerCase();
+
+    document
+        .querySelectorAll('#table tbody tr')
+        .forEach(row => {
+            row.style.display =
+                row.textContent
+                    .toLowerCase()
+                    .includes(q)
+                    ? ''
+                    : 'none';
+        });
+}
+</script>
+{% endblock %}
+
+{% block stylesheets %}
+<style>
+.main{
+    padding:40px;
+}
+
+.page-header{
+    margin-bottom:20px;
+}
+
+.search-bar{
+    margin-bottom:20px;
+}
+
+.search-bar input{
+    width:100%;
+    max-width:400px;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:10px;
+}
+
+.table-wrap{
+    background:white;
+    border-radius:14px;
+    overflow:hidden;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    padding:16px;
+    border-bottom:1px solid #eee;
+    text-align:left;
+}
+
+.badge{
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:12px;
+}
+
+.badge-blue{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+.badge-gray{
+    background:#f3f4f6;
+    color:#4b5563;
+}
+
+.actions{
+    display:flex;
+    gap:8px;
+    align-items:center;
+}
+
+.btn{
+    border:none;
+    padding:8px 12px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.btn-primary{
+    background:#2563eb;
+    color:white;
+}
+
+.btn-warning{
+    background:#f59e0b;
+    color:white;
+}
+
+.btn-danger{
+    background:#dc2626;
+    color:white;
+}
+
+.empty{
+    padding:30px;
+    text-align:center;
+    color:#666;
+}
+</style>
 {% endblock %}

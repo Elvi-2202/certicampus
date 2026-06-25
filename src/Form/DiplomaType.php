@@ -16,6 +16,11 @@ class DiplomaType extends AbstractType
     {
         $builder
             ->add('file_url', TextType::class, ['label' => 'URL du fichier'])
+            // Ajout du champ Niveau juste après le fichier
+            ->add('level', TextType::class, [
+                'label' => 'Niveau (ex: Bac+3, Master...)',
+                'required' => true
+            ])
             ->add('generated_at', DateTimeType::class, [
                 'label'  => 'Date de génération',
                 'widget' => 'single_text',

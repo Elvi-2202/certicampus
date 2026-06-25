@@ -16,6 +16,10 @@ class Diploma
     #[ORM\Column(length: 255)]
     private ?string $file_url = null;
 
+    // Nouvelle propriété pour le niveau
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $level = null;
+
     #[ORM\Column]
     private ?\DateTimeImmutable $generated_at = null;
 
@@ -35,6 +39,20 @@ class Diploma
     public function setFileUrl(string $file_url): static
     {
         $this->file_url = $file_url;
+
+        return $this;
+    }
+
+    // Getter pour le niveau
+    public function getLevel(): ?string
+    {
+        return $this->level;
+    }
+
+    // Setter pour le niveau
+    public function setLevel(?string $level): static
+    {
+        $this->level = $level;
 
         return $this;
     }

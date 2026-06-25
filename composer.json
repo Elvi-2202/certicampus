@@ -41,7 +41,6 @@
         "symfony/translation": "8.0.*",
         "symfony/twig-bundle": "8.0.*",
         "symfony/uid": "*",
-        "symfony/ux-turbo": "^3.0",
         "symfony/validator": "8.0.*",
         "symfony/web-link": "8.0.*",
         "symfony/yaml": "8.0.*",

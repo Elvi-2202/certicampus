@@ -177,6 +177,17 @@
     letter-spacing: -1px;
     color: #1a1a1a;
     line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .diploma-level {
+    font-size: 14px;
+    font-weight: 600;
+    color: #c8f564;
+    background: #1a1a1a;
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
     margin-bottom: 10px;
   }
 
@@ -311,6 +322,10 @@
 
                         <div class="diploma-title">
                             #{{ diploma.id }}
+                        </div>
+
+                        <div class="diploma-level">
+                            {{ diploma.level|default('Niveau non spécifié') }}
                         </div>
 
                         <div class="diploma-sub">

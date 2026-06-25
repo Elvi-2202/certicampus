@@ -13,69 +13,64 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // 1. Prénom
             ->add('firstname', TextType::class, [
                 'label' => 'Prénom',
-                'attr' => ['placeholder' => 'Votre prénom'],
+                'attr'  => ['placeholder' => 'Votre prénom'],
                 'constraints' => [
-                    new NotBlank(
-                        message: 'Veuillez entrer votre prénom'
-                    ),
+                    new NotBlank(message: 'Veuillez entrer votre prénom'),
                 ],
             ])
-            // 2. Nom
             ->add('lastname', TextType::class, [
                 'label' => 'Nom',
-                'attr' => ['placeholder' => 'Votre nom'],
+                'attr'  => ['placeholder' => 'Votre nom'],
                 'constraints' => [
-                    new NotBlank(
-                        message: 'Veuillez entrer votre nom'
-                    ),
+                    new NotBlank(message: 'Veuillez entrer votre nom'),
                 ],
             ])
-            // 3. Email
             ->add('email', EmailType::class, [
                 'label' => 'Email',
-                'attr' => ['placeholder' => 'votre@email.com'],
+                'attr'  => ['placeholder' => 'votre@email.com'],
                 'constraints' => [
-                    new NotBlank(
-                        message: 'Veuillez entrer un email'
-                    ),
+                    new NotBlank(message: 'Veuillez entrer un email'),
                 ],
             ])
-            // 4. Mot de passe
             ->add('plainPassword', PasswordType::class, [
-                'label' => 'Mot de passe',
+                'label'  => 'Mot de passe',
                 'mapped' => false,
-                'attr' => [
+                'attr'   => [
                     'autocomplete' => 'new-password',
-                    'placeholder' => 'Minimum 6 caractères'
+                    'placeholder'  => '8 caractères min, lettres et chiffres',
+                    'id'           => 'plainPassword',
                 ],
                 'constraints' => [
-                    new NotBlank(
-                        message: 'Veuillez entrer un mot de passe',
-                    ),
+                    new NotBlank(message: 'Veuillez entrer un mot de passe'),
                     new Length(
-                        min: 6,
-                        minMessage: 'Votre mot de passe doit faire au moins {{ limit }} caractères',
+                        min: 8,
+                        minMessage: 'Le mot de passe doit contenir au moins {{ limit }} caractères.',
                         max: 4096,
                     ),
+                    new Regex(
+                        pattern: '/[a-zA-Z]/',
+                        message: 'Le mot de passe doit contenir au moins une lettre.',
+                    ),
+                    new Regex(
+                        pattern: '/[0-9]/',
+                        message: 'Le mot de passe doit contenir au moins un chiffre.',
+                    ),
                 ],
             ])
-            // 5. Conditions
             ->add('agreeTerms', CheckboxType::class, [
-                'label' => 'J\'accepte les conditions d\'utilisation',
+                'label'  => "J'accepte les conditions d'utilisation",
                 'mapped' => false,
                 'constraints' => [
-                    new IsTrue(
-                        message: 'Vous devez accepter nos conditions pour continuer.',
-                    ),
+                    new IsTrue(message: 'Vous devez accepter nos conditions pour continuer.'),
                 ],
             ])
         ;

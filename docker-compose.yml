@@ -1,6 +1,6 @@
 services:
   db:
-    image: mysql:8.0
+    image: mysql:8.1
     container_name: symfony_db
     restart: always
     environment:
@@ -24,6 +24,11 @@ services:
       - /var/www/var/cache
       - /var/www/var/log
       - /var/www/vendor
+
+    # 🔥 AJOUT IMPORTANT ICI
+    env_file:
+      - .env
+
     depends_on:
       - db
 

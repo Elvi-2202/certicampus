@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+// #[UniqueEntity(fields: ['email'], message: 'Il y a déjà un compte avec cette adresse mail')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -38,6 +38,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     private ?string $lastname = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $password_reset_token = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $password_reset_token_expires_at = null;
 
     public function getId(): ?int
     {
@@ -123,6 +129,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastname(string $lastname): static
     {
         $this->lastname = $lastname;
+        return $this;
+    }
+
+    public function getPasswordResetToken(): ?string
+    {
+        return $this->password_reset_token;
+    }
+
+    public function setPasswordResetToken(?string $password_reset_token): static
+    {
+        $this->password_reset_token = $password_reset_token;
+        return $this;
+    }
+
+    public function getPasswordResetTokenExpiresAt(): ?\DateTimeImmutable
+    {
+        return $this->password_reset_token_expires_at;
+    }
+
+    public function setPasswordResetTokenExpiresAt(?\DateTimeImmutable $password_reset_token_expires_at): static
+    {
+        $this->password_reset_token_expires_at = $password_reset_token_expires_at;
         return $this;
     }
 }

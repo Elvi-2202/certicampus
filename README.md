@@ -193,7 +193,7 @@ Ngrok permet d'exposer l'application tournant en local via une URL publique HTTP
 
 Installation
 
-Télécharger Ngrok sur https://ngrok.com/download et créer un compte gratuit.
+installer Ngrok avec cette commande: winget install ngrok.ngrok et créer un compte gratuit.
 
 Connecter son token (une seule fois) :
 
@@ -202,6 +202,7 @@ bashngrok config add-authtoken VOTRE_TOKEN
 S'assurer que les containers Docker tournent, puis dans un terminal séparé :
 
 bashdocker compose up -d
+ngrok config add-authtoken TON_TOKEN
 ngrok http 8080
 
 Ngrok affiche une URL publique du type :
